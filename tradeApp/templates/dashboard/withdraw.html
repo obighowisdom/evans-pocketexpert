@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% include 'base/adminHead.html' %}
+  <body>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+      body {
+        background-color: #f8f9fa;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        overflow-x: hidden;
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 250px;
+        background-color: #1a1a40; /* Darker blue background */
+        color: white;
+        padding-top: 20px;
+        transition: all 0.3s;
+        z-index: 1000;
+      }
+
+      .sidebar-header {
+        text-align: center;
+        padding: 10px;
+        margin-bottom: 20px;
+      }
+
+      .sidebar-logo {
+        font-weight: 700;
+        font-size: 1.5rem;
+      }
+
+      .nav-item {
+        margin-bottom: 5px;
+      }
+
+      .nav-link {
+        color: rgba(255, 255, 255, 0.8);
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s;
+        border-radius: 0 30px 30px 0;
+      }
+
+      .nav-link:hover,
+      .nav-link.active {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .nav-link i {
+        width: 24px;
+        text-align: center;
+      }
+
+      .content-wrapper {
+        margin-left: 250px;
+        transition: all 0.3s;
+        width: calc(100% - 250px);
+      }
+
+      /* Toggle Button for mobile */
+      .sidebar-toggle {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1001;
+        display: none;
+        background-color: #1a1a40; /* Match sidebar color */
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 6px 10px;
+        cursor: pointer;
+      }
+
+      /* Header Styles */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .user-name {
+        font-weight: 600;
+        font-size: 1.2rem;
+        margin: 0;
+      }
+
+      .add-money-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 20px;
+        padding: 6px 15px;
+        color: #212529;
+        font-weight: 500;
+      }
+
+      .add-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 24px;
+        height: 24px;
+        background-color: #512888;
+        color: white;
+        border-radius: 50%;
+        font-size: 14px;
+      }
+
+      .account-card {
+        background-color: #1a1a40;
+        color: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin: 20px;
+        text-align: center;
+      }
+
+      .balance-title {
+        font-weight: 500;
+        font-size: 1rem;
+        margin-bottom: 10px;
+      }
+
+      .balance-amount {
+        font-weight: 700;
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+      }
+
+      .action-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+
+      .action-button {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        padding: 15px;
+        flex: 1;
+        margin: 0 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: white;
+        text-decoration: none;
+      }
+
+      .action-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .spend-icon {
+        background-color: #6c7cd0;
+      }
+
+      .save-icon {
+        background-color: #ff9d42;
+      }
+
+      .borrow-icon {
+        background-color: #62d26f;
+      }
+
+      .favorites-section {
+        padding: 0 20px;
+        margin-top: 30px;
+      }
+
+      .favorites-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .section-title {
+        font-weight: 600;
+        font-size: 1.2rem;
+        margin: 0;
+      }
+
+      .edit-link {
+        color: #512888;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .favorites-grid {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .favorite-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        flex: 1;
+      }
+
+      .favorite-icon-wrapper {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: #e9ecff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .favorite-label {
+        font-weight: 500;
+        margin-top: 8px;
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 991px) {
+        .sidebar {
+          transform: translateX(-250px);
+        }
+
+        .sidebar.active {
+          transform: translateX(0);
+        }
+
+        .content-wrapper {
+          margin-left: 0;
+          width: 100%;
+        }
+
+        .content-wrapper.sidebar-active {
+          margin-left: 250px;
+        }
+
+        .sidebar-toggle {
+          display: block;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .action-button {
+          margin: 5px 0;
+        }
+
+        .header {
+          padding-left: 50px;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .favorites-grid {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .favorite-item {
+          margin-bottom: 20px;
+        }
+
+        .user-name {
+          font-size: 1rem;
+        }
+
+        .balance-amount {
+          font-size: 2rem;
+        }
+      }
+    </style>
+
+
+  <style>
+    
+    
+    .withdraw-container {
+      max-width: 900px;
+      margin: 50px auto;
+    }
+    
+    .card {
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      background-color: #1a1d3a;
+      color: white;
+    }
+    
+    .card-header {
+      background-color: #161836;
+      border-radius: 15px 15px 0 0 !important;
+      padding: 18px 25px;
+      border-bottom: 1px solid #2d305a;
+    }
+    
+    .crypto-select {
+      background-color: #252850;
+      color: white;
+      border: 1px solid #383c7a;
+      border-radius: 8px;
+      padding: 10px 15px;
+    }
+    
+    .crypto-select:focus, .form-control:focus {
+      background-color: #252850;
+      color: white;
+      border-color: #4e54c8;
+      box-shadow: 0 0 0 0.2rem rgba(78, 84, 200, 0.25);
+    }
+    
+    .form-control {
+      background-color: #252850;
+      color: white;
+      border: 1px solid #383c7a;
+      border-radius: 8px;
+      padding: 10px 15px;
+    }
+    
+    .form-control::placeholder {
+      color: #6c757d;
+      opacity: 0.7;
+    }
+    
+    .warning-notice {
+      background-color: rgba(255, 87, 34, 0.15);
+      border-left: 4px solid #ff5722;
+      padding: 15px;
+      border-radius: 0 8px 8px 0;
+      color: #ffad99;
+      margin-bottom: 20px;
+    }
+    
+    .info-notice {
+      background-color: rgba(33, 150, 243, 0.15);
+      border-left: 4px solid #2196f3;
+      padding: 15px;
+      border-radius: 0 8px 8px 0;
+      color: #90caf9;
+      margin-bottom: 20px;
+    }
+    
+    .fee-display {
+      background-color: #252850;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .btn-primary {
+      background-color: #4e54c8;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-weight: 500;
+    }
+    
+    .btn-primary:hover {
+      background-color: #3f44a9;
+    }
+    
+    .address-container {
+      background-color: #252850;
+      border-radius: 8px;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .address-text {
+      margin: 0;
+      font-family: monospace;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .copy-btn {
+      background-color: #4e54c8;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      transition: all 0.3s ease;
+    }
+    
+    .copy-btn:hover {
+      background-color: #3f44a9;
+    }
+    
+    .copy-notification {
+      position: absolute;
+      background-color: rgba(40, 167, 69, 0.9);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 4px;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 100;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: -40px;
+    }
+    
+    .copy-notification.show {
+      opacity: 1;
+    }
+    
+    .address-wrapper {
+      position: relative;
+    }
+    
+    .nav-pills .nav-link {
+      color: #a7a9bc;
+      border-radius: 8px;
+      padding: 12px 20px;
+    }
+    
+    .nav-pills .nav-link.active {
+      background-color: #4e54c8;
+      color: white;
+    }
+    
+    .badge {
+      padding: 6px 10px;
+      border-radius: 4px;
+    }
+  </style>
+    <!-- Sidebar Toggle Button (visible on small screens) -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    {% include 'base/adminSidebar.html' %}
+
+    <!-- Main Content -->
+    <div class="content-wrapper" id="content">
+      <!-- Header with user info and add money button -->
+      {% include 'base/adminNav.html' %}
+
+      <!-- Account Balance Card -->
+      <div class="withdraw-container">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="mb-0">Withdraw Cryptocurrency</h4>
+      </div>
+      <div class="card-body">
+        <ul class="nav nav-pills mb-4" id="withdrawTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="withdraw-form-tab" data-bs-toggle="pill" data-bs-target="#withdraw-form" type="button" role="tab">Withdraw</button>
+          </li>
+          <!-- <li class="nav-item" role="presentation">
+            <button class="nav-link" id="withdraw-history-tab" data-bs-toggle="pill" data-bs-target="#withdraw-history" type="button" role="tab">Withdrawal History</button>
+          </li> -->
+        </ul>
+        
+        <div class="tab-content" id="withdrawTabContent">
+          <form method="POST" class="tab-pane fade show active" id="withdraw-form" role="tabpanel">
+            {% csrf_token %}
+            <div class="warning-notice mb-4">
+              <h6 class="text-warning"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill me-2" viewBox="0 0 16 16">
+                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+              </svg> Important Fee Notice</h6>
+              <p class="mb-2">To process your withdrawal, a transaction fee of <strong>10%</strong> of the total withdrawal amount must be paid to the following BITCOIN wallet address:</p>
+              <div class="address-wrapper">
+                <div class="address-container">
+                  <p class="address-text" id="fee-address-text">bc1qzynespjjzqfk8s8sfzycm32j3fjrhasew37xye</p>
+                  <button class="btn copy-btn" id="fee-copy-btn" onclick="copyFeeAddress()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+                      <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                      <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                    </svg>
+                    Copy
+                  </button>
+                </div>
+                <div class="copy-notification" id="fee-copy-notification">Address Copied!</div>
+              </div>
+              <p class="mt-2 mb-0">Your withdrawal will be processed once we confirm receipt of the transaction fee.</p>
+            </div>
+            
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <label for="withdraw-currency" class="form-label">Select Cryptocurrency</label>
+                <select id="withdraw-currency" name="currency" class="form-select crypto-select">
+                  <option value="btc" selected>Bitcoin (BTC)</option>
+                  <option value="eth">Ethereum (ETH)</option>
+                  <option value="ltc">Litecoin (LTC)</option>
+                  <option value="xrp">XRP (XRP)</option>
+                  <option value="eos">EOS (EOS)</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Available Balance</label>
+                <div class="fee-display">
+                  <h5 class="mb-0"><span id="available-balance">$ {{user.wallet.amount}}</span> <span>$</span></h5>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <label for="withdraw-address" class="form-label">Withdrawal Address</label>
+                <input type="text" required class="form-control" name="address" id="withdraw-address" placeholder="Enter your wallet address">
+              </div>
+               <div class="col-md-6">
+                <label for="withdraw-amount" class="form-label">Your Email Address</label>
+                <input type="email" disabled style="color: #161836;" class="form-control"  value="{{user.email}}">
+              </div>
+              <br>
+              <div class="col-md-6">
+                <label for="withdraw-amount" class="form-label">Full Names</label>
+                <input type="text"  class="form-control" name="name" >
+              </div>
+            </div>
+            
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <label for="withdraw-amount" class="form-label">Amount to Withdraw</label>
+                <input type="number" required class="form-control" name="amount" id="withdraw-amount" placeholder="0.00" step="0.00001" min="0" oninput="calculateFee()">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Transaction Fee (10%)</label>
+                <div class="fee-display">
+                  <h5 class="mb-0"><span id="fee-amount">0.00</span> <span id="fee-currency">$</span></h5>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row mb-4">
+              <div class="col-md-12">
+                <div class="info-notice">
+                  <h6>Transaction Information:</h6>
+                  <ul class="mb-0">
+                    <!-- <li>Minimum withdrawal: <span id="min-withdraw">0.001</span> <span id="min-currency">BTC</span></li>
+                    <li>Maximum withdrawal: <span id="max-withdraw">1.000</span> <span id="max-currency">BTC</span></li>
+                    <li>Processing time: <span id="processing-time">1-3 hours</span></li> -->
+                    <li>You will receive: <strong><span id="final-amount">0.00</span> <span id="final-currency">$</span></strong> (after fee)</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+            <div class="d-grid gap-2">
+              <button class="btn btn-primary" type="submit">Submit Withdrawal Request</button>
+            </div>
+          </form>
+          
+          <!-- <div class="tab-pane fade" id="withdraw-history" role="tabpanel">
+            <div class="table-responsive">
+              <table class="table table-dark table-hover">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Currency</th>
+                    <th>Amount</th>
+                    <th>Fee</th>
+                    <th>Status</th>
+                    <th>Tx ID</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>2025-03-30 09:12</td>
+                    <td>BTC</td>
+                    <td>0.025</td>
+                    <td>0.0025</td>
+                    <td><span class="badge bg-success">Completed</span></td>
+                    <td><a href="#" class="text-info">d71a...8e5f</a></td>
+                  </tr>
+                  <tr>
+                    <td>2025-03-15 15:46</td>
+                    <td>ETH</td>
+                    <td>0.75</td>
+                    <td>0.075</td>
+                    <td><span class="badge bg-warning text-dark">Pending</span></td>
+                    <td><a href="#" class="text-info">4b7c...9d3a</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    // Initialize values
+    document.addEventListener('DOMContentLoaded', function() {
+      updateCurrencyInfo('btc');
+    });
+    
+    // Calculate fee based on amount
+    function calculateFee() {
+      const amount = parseFloat(document.getElementById('withdraw-amount').value) || 0;
+      const fee = amount * 0.1; // 10% fee
+      const finalAmount = amount - fee;
+      
+      document.getElementById('fee-amount').textContent = fee.toFixed(8);
+      document.getElementById('final-amount').textContent = finalAmount.toFixed(8);
+    }
+    
+    // Copy fee address
+    function copyFeeAddress() {
+      const addressText = document.getElementById('fee-address-text').innerText;
+      navigator.clipboard.writeText(addressText).then(() => {
+        // Change button appearance
+        const copyBtn = document.getElementById('fee-copy-btn');
+        copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16"><path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/></svg> Copied!';
+        copyBtn.classList.add('btn-success');
+        copyBtn.classList.remove('copy-btn');
+        
+        // Show notification
+        const notification = document.getElementById('fee-copy-notification');
+        notification.classList.add('show');
+        
+        // Reset after 2 seconds
+        setTimeout(() => {
+          copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/></svg> Copy';
+          copyBtn.classList.remove('btn-success');
+          copyBtn.classList.add('copy-btn');
+          notification.classList.remove('show');
+        }, 2000);
+      });
+    }
+    
+    // Update currency information when selection changes
+    document.getElementById('withdraw-currency').addEventListener('change', function() {
+      updateCurrencyInfo(this.value);
+    });
+    
+    function updateCurrencyInfo(currency) {
+      const balances = {
+        'btc': '{{user.wallet.amount}}',
+        'eth': '{{user.wallet.amount}}',
+        'ltc': '{{user.wallet.amount}}',
+        'xrp': '{{user.wallet.amount}}',
+        'eos': '{{user.wallet.amount}}'
+      };
+      
+      const minWithdraw = {
+        'btc': '0.001',
+        'eth': '0.01',
+        'ltc': '0.1',
+        'xrp': '20',
+        'eos': '5'
+      };
+      
+      const maxWithdraw = {
+        'btc': '1.000',
+        'eth': '10.00',
+        'ltc': '40.00',
+        'xrp': '2000',
+        'eos': '500'
+      };
+      
+      const processingTimes = {
+        'btc': '1-3 hours',
+        'eth': '10-15 minutes',
+        'ltc': '5-10 minutes',
+        'xrp': '1-2 minutes',
+        'eos': '1-2 minutes'
+      };
+      
+      const currencyCode = currency.toUpperCase();
+      
+      document.getElementById('available-balance').textContent = balances[currency];
+      document.getElementById('currency-code').textContent = currencyCode;
+      document.getElementById('fee-currency').textContent = currencyCode;
+      document.getElementById('min-withdraw').textContent = minWithdraw[currency];
+      document.getElementById('min-currency').textContent = currencyCode;
+      document.getElementById('max-withdraw').textContent = maxWithdraw[currency];
+      document.getElementById('max-currency').textContent = currencyCode;
+      document.getElementById('processing-time').textContent = processingTimes[currency];
+      document.getElementById('final-currency').textContent = currencyCode;
+      
+      // Reset amount field and calculations
+      document.getElementById('withdraw-amount').value = '';
+      document.getElementById('fee-amount').textContent = '0.00';
+      document.getElementById('final-amount').textContent = '0.00';
+    }
+    
+    // Submit withdrawal request
+    // document.getElementById('withdraw-btn').addEventListener('click', function() {
+    //   const amount = parseFloat(document.getElementById('withdraw-amount').value) || 0;
+    //   const address = document.getElementById('withdraw-address').value.trim();
+    //   const currency = document.getElementById('withdraw-currency').value;
+      
+    //   // Basic validation
+    //   if (amount <= 0) {
+    //     alert('Please enter a valid amount');
+    //     return;
+    //   }
+      
+    //   if (!address) {
+    //     alert('Please enter a withdrawal address');
+    //     return;
+    //   }
+      
+    //   // In a real app, you would send this to your backend
+    //   alert(`Withdrawal request submitted!\n\nCurrency: ${currency.toUpperCase()}\nAmount: ${amount}\nAddress: ${address}\n\nPlease remember to pay the 10% transaction fee to process your withdrawal.`);
+    // });
+  </script>
+  </body>
+</html>

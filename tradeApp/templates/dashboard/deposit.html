@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% include 'base/adminHead.html' %}
+  <body>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+      body {
+        background-color: #f8f9fa;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        overflow-x: hidden;
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 250px;
+        background-color: #1a1a40; /* Darker blue background */
+        color: white;
+        padding-top: 20px;
+        transition: all 0.3s;
+        z-index: 1000;
+      }
+
+      .sidebar-header {
+        text-align: center;
+        padding: 10px;
+        margin-bottom: 20px;
+      }
+
+      .sidebar-logo {
+        font-weight: 700;
+        font-size: 1.5rem;
+      }
+
+      .nav-item {
+        margin-bottom: 5px;
+      }
+
+      .nav-link {
+        color: rgba(255, 255, 255, 0.8);
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s;
+        border-radius: 0 30px 30px 0;
+      }
+
+      .nav-link:hover,
+      .nav-link.active {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .nav-link i {
+        width: 24px;
+        text-align: center;
+      }
+
+      .content-wrapper {
+        margin-left: 250px;
+        transition: all 0.3s;
+        width: calc(100% - 250px);
+      }
+
+      /* Toggle Button for mobile */
+      .sidebar-toggle {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1001;
+        display: none;
+        background-color: #1a1a40; /* Match sidebar color */
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 6px 10px;
+        cursor: pointer;
+      }
+
+      /* Header Styles */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .user-name {
+        font-weight: 600;
+        font-size: 1.2rem;
+        margin: 0;
+      }
+
+      .add-money-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 20px;
+        padding: 6px 15px;
+        color: #212529;
+        font-weight: 500;
+      }
+
+      .add-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 24px;
+        height: 24px;
+        background-color: #512888;
+        color: white;
+        border-radius: 50%;
+        font-size: 14px;
+      }
+
+      .account-card {
+        background-color: #1a1a40;
+        color: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin: 20px;
+        text-align: center;
+      }
+
+      .balance-title {
+        font-weight: 500;
+        font-size: 1rem;
+        margin-bottom: 10px;
+      }
+
+      .balance-amount {
+        font-weight: 700;
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+      }
+
+      .action-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+
+      .action-button {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        padding: 15px;
+        flex: 1;
+        margin: 0 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: white;
+        text-decoration: none;
+      }
+
+      .action-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .spend-icon {
+        background-color: #6c7cd0;
+      }
+
+      .save-icon {
+        background-color: #ff9d42;
+      }
+
+      .borrow-icon {
+        background-color: #62d26f;
+      }
+
+      .favorites-section {
+        padding: 0 20px;
+        margin-top: 30px;
+      }
+
+      .favorites-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .section-title {
+        font-weight: 600;
+        font-size: 1.2rem;
+        margin: 0;
+      }
+
+      .edit-link {
+        color: #512888;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .favorites-grid {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .favorite-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        flex: 1;
+      }
+
+      .favorite-icon-wrapper {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: #e9ecff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .favorite-label {
+        font-weight: 500;
+        margin-top: 8px;
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 991px) {
+        .sidebar {
+          transform: translateX(-250px);
+        }
+
+        .sidebar.active {
+          transform: translateX(0);
+        }
+
+        .content-wrapper {
+          margin-left: 0;
+          width: 100%;
+        }
+
+        .content-wrapper.sidebar-active {
+          margin-left: 250px;
+        }
+
+        .sidebar-toggle {
+          display: block;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .action-button {
+          margin: 5px 0;
+        }
+
+        .header {
+          padding-left: 50px;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .favorites-grid {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .favorite-item {
+          margin-bottom: 20px;
+        }
+
+        .user-name {
+          font-size: 1rem;
+        }
+
+        .balance-amount {
+          font-size: 2rem;
+        }
+      }
+    </style>
+
+    <style>
+      .deposit-container {
+        max-width: 900px;
+        margin: 50px auto;
+      }
+
+      .card {
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background-color: #1a1d3a;
+        color: white;
+      }
+
+      .card-header {
+        background-color: #161836;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 18px 25px;
+        border-bottom: 1px solid #2d305a;
+      }
+
+      .crypto-select {
+        background-color: #252850;
+        color: white;
+        border: 1px solid #383c7a;
+        border-radius: 8px;
+        padding: 10px 15px;
+      }
+
+      .crypto-select:focus {
+        background-color: #252850;
+        color: white;
+        border-color: #4e54c8;
+        box-shadow: 0 0 0 0.2rem rgba(78, 84, 200, 0.25);
+      }
+
+      .address-container {
+        background-color: #252850;
+        border-radius: 8px;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .address-text {
+        margin: 0;
+        font-family: monospace;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .copy-btn {
+        background-color: #4e54c8;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        transition: all 0.3s ease;
+      }
+
+      .copy-btn:hover {
+        background-color: #3f44a9;
+      }
+
+      .qr-code {
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        max-width: 180px;
+        margin: 0 auto;
+      }
+
+      .important-note {
+        background-color: rgba(255, 193, 7, 0.1);
+        border-left: 4px solid #ffc107;
+        padding: 15px;
+        border-radius: 0 8px 8px 0;
+        color: #ffe083;
+      }
+
+      .crypto-logo {
+        width: 32px;
+        height: 32px;
+        margin-right: 10px;
+        display: inline-block;
+        vertical-align: middle;
+        background-color: white;
+        border-radius: 50%;
+        padding: 3px;
+      }
+
+      .nav-pills .nav-link {
+        color: #a7a9bc;
+        border-radius: 8px;
+        padding: 12px 20px;
+      }
+
+      .nav-pills .nav-link.active {
+        background-color: #4e54c8;
+        color: white;
+      }
+
+      .copy-notification {
+        position: absolute;
+        background-color: rgba(40, 167, 69, 0.9);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 4px;
+        font-size: 14px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 100;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: -40px;
+      }
+
+      .copy-notification.show {
+        opacity: 1;
+      }
+
+      .address-wrapper {
+        position: relative;
+      }
+    </style>
+    <!-- Sidebar Toggle Button (visible on small screens) -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    {% include 'base/adminSidebar.html' %}
+
+    <!-- Main Content -->
+    <div class="content-wrapper" id="content">
+      <!-- Header with user info and add money button -->
+      {% include 'base/adminNav.html' %}
+
+      <!-- Account Balance Card -->
+      <div class="deposit-container">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="mb-0">Deposit Cryptocurrency</h4>
+          </div>
+          <div class="card-body">
+            <ul class="nav nav-pills mb-4" id="depositTab" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link active"
+                  id="deposit-address-tab"
+                  data-bs-toggle="pill"
+                  data-bs-target="#deposit-address"
+                  type="button"
+                  role="tab"
+                >
+                  Deposit Address
+                </button>
+              </li>
+              <!-- <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link"
+                  id="deposit-history-tab"
+                  data-bs-toggle="pill"
+                  data-bs-target="#deposit-history"
+                  type="button"
+                  role="tab"
+                >
+                  Deposit History
+                </button>
+              </li> -->
+            </ul>
+
+            <div class="tab-content" id="depositTabContent">
+              <div
+                class="tab-pane fade show active"
+                id="deposit-address"
+                role="tabpanel"
+              >
+                <div class="row mb-4">
+                  <div class="col-md-12">
+                    <label for="crypto-select" class="form-label"
+                      >Select Cryptocurrency</label
+                    >
+                    <select
+                      id="crypto-select"
+                      class="form-select crypto-select mb-4"
+                    >
+                      <option value="btc" selected>
+                        <!-- <img
+                          src="/api/placeholder/24/24"
+                          alt="Bitcoin"
+                          class="crypto-logo"
+                        /> -->
+                        Bitcoin (BTC)
+                      </option>
+                      <option value="eth">
+                        <!-- <img
+                          src="/api/placeholder/24/24"
+                          alt="Ethereum"
+                          class="crypto-logo"
+                        /> -->
+                        Ethereum (ETH)
+                      </option>
+                      <option value="ltc">
+                        <!-- <img
+                          src="/api/placeholder/24/24"
+                          alt="Litecoin"
+                          class="crypto-logo"
+                        /> -->
+                        Tether (USDT)
+                      </option>
+                      <!-- <option value="xrp">
+                        <img
+                          src="/api/placeholder/24/24"
+                          alt="XRP"
+                          class="crypto-logo"
+                        />
+                        XRP (XRP)
+                      </option>
+                      <option value="eos">
+                        <img
+                          src="/api/placeholder/24/24"
+                          alt="EOS"
+                          class="crypto-logo"
+                        />
+                        EOS (EOS)
+                      </option> -->
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row mb-4">
+                  <div class="col-md-8">
+                    <label class="form-label">Deposit Address</label>
+                    <div class="address-wrapper">
+                      <div class="address-container">
+                        <p class="address-text" id="deposit-address-text">
+                          bc1qzynespjjzqfk8s8sfzycm32j3fjrhasew37xye
+                        </p>
+                        <button
+                          class="btn copy-btn"
+                          id="copy-btn"
+                          onclick="copyAddress()"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            class="bi bi-clipboard"
+                            viewBox="0 0 16 16"
+                          >
+                            <path
+                              d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"
+                            />
+                            <path
+                              d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"
+                            />
+                          </svg>
+                          Copy
+                        </div>
+                      </div>
+                      <div class="copy-notification" id="copy-notification">
+                        Address Copied!
+                      </div>
+                    </div>
+                  </div>
+                  <!-- <div class="col-md-4 text-center">
+                    <label class="form-label d-block">QR Code</label>
+                    <div class="qr-code">
+                      <img
+                        src="/api/placeholder/150/150"
+                        alt="BTC QR Code"
+                        class="img-fluid"
+                      />
+                    </div>
+                  </div> -->
+                </div>
+
+                <div class="row">
+                  <div class="col-12">
+                    <div class="important-note">
+                      <h6>Important:</h6>
+                      <ul class="mb-0">
+                        <li>Send only BTC to this deposit address.</li>
+                        <li>Ensure the network is Bitcoin (BTC).</li>
+                        <!-- <li>Minimum deposit: 0.0001 BTC</li> -->
+                        <li>
+                          Your deposit will be credited after 2 network
+                          confirmations.
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div class="tab-pane fade" id="deposit-history" role="tabpanel">
+                <div class="table-responsive">
+                  <table class="table table-dark table-hover">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Currency</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Tx ID</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>2025-04-01 14:32</td>
+                        <td>BTC</td>
+                        <td>0.055</td>
+                        <td><span class="badge bg-success">Completed</span></td>
+                        <td><a href="#" class="text-info">35f3...8a2b</a></td>
+                      </tr>
+                      <tr>
+                        <td>2025-03-28 09:15</td>
+                        <td>ETH</td>
+                        <td>1.25</td>
+                        <td><span class="badge bg-success">Completed</span></td>
+                        <td><a href="#" class="text-info">0xf2...d71a</a></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      function copyAddress() {
+        const addressText = document.getElementById(
+          "deposit-address-text"
+        ).innerText;
+        navigator.clipboard.writeText(addressText).then(() => {
+          // Change button appearance
+          const copyBtn = document.getElementById("copy-btn");
+          copyBtn.innerHTML =
+            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16"><path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/></svg> Copied!';
+          copyBtn.classList.add("btn-success");
+          copyBtn.classList.remove("copy-btn");
+
+          // Show notification
+          const notification = document.getElementById("copy-notification");
+          notification.classList.add("show");
+
+          // Reset after 2 seconds
+          setTimeout(() => {
+            copyBtn.innerHTML =
+              '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/></svg> Copy';
+            copyBtn.classList.remove("btn-success");
+            copyBtn.classList.add("copy-btn");
+            notification.classList.remove("show");
+          }, 2000);
+        });
+      }
+
+      document
+        .getElementById("crypto-select")
+        .addEventListener("change", function () {
+          const cryptoValue = this.value;
+          const addressMap = {
+            btc: "bc1qzynespjjzqfk8s8sfzycm32j3fjrhasew37xye",
+            eth: "0xD274B10023a97d1221D4E899d58D0bB29CF70A06",
+            ltc: "TAPEw64idmLAiiwAZGubpsXE5DiFAJTAar",
+            
+          };
+
+          document.getElementById("deposit-address-text").innerText =
+            addressMap[cryptoValue];
+
+          // Update the important note
+          const noteElement = document.querySelector(".important-note");
+          const currentCrypto = this.options[this.selectedIndex].text
+            .split("(")[1]
+            .split(")")[0];
+
+          const noteContent = `
+        <h6>Important:</h6>
+        <ul class="mb-0">
+          <li>Send only ${currentCrypto} to this deposit address.</li>
+          <li>Ensure the network is ${this.options[this.selectedIndex].text
+            .split("(")[0]
+            .trim()}.</li>
+          <li>Your deposit will be credited after ${getConfirmations(
+            cryptoValue
+          )} network confirmations.</li>
+        </ul>
+      `;
+
+          noteElement.innerHTML = noteContent;
+        });
+
+      function getMinDeposit(crypto) {
+        const minimums = {
+          btc: "0.0001 BTC",
+          eth: "0.01 ETH",
+          ltc: "0.01 LTC",
+          xrp: "20 XRP",
+          eos: "1 EOS",
+        };
+        return minimums[crypto];
+      }
+
+      function getConfirmations(crypto) {
+        const confirmations = {
+          btc: "2",
+          eth: "12",
+          ltc: "6",
+          xrp: "1",
+          eos: "1",
+        };
+        return confirmations[crypto];
+      }
+    </script>
+  </body>
+</html>

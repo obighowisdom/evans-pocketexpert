@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BankApp - Contact Us</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+               .contact-header {
+            background-color: #1a1f36;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .contact-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .btn-primary {
+            background-color: #4e73df;
+            border-color: #4e73df;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3756b5;
+            border-color: #3756b5;
+        }
+        
+        .contact-icon {
+            font-size: 2rem;
+            color: #4e73df;
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+        }
+        
+        .contact-method {
+            padding: 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-method:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-5px);
+        }
+        
+        .success-message {
+            display: none;
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <!-- Contact header -->
+        <div class="contact-header">
+            <h1>Contact Us</h1>
+            <p>We're here to help with any questions or issues you may have</p>
+        </div>
+
+        <div class="row">
+            <!-- Contact methods -->
+            <div class="col-md-4 mb-4">
+                <div class="contact-card">
+                    <h3 class="mb-4">Get in Touch</h3>
+                    
+                    <div class="contact-method mb-4 text-center">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <h5>Phone Support</h5>
+                        <p class="mb-2">24/7 Customer Service</p>
+                        <p class="mb-0">+1 (800) 123-4567</p>
+                    </div>
+                    
+                    <div class="contact-method mb-4 text-center">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h5>Email Support</h5>
+                        <p class="mb-2">Response within 24 hours</p>
+                        <p class="mb-0">support@bankapp.com</p>
+                    </div>
+                    
+                    <div class="contact-method text-center">
+                        <div class="contact-icon">
+                            <i class="fas fa-comment-alt"></i>
+                        </div>
+                        <h5>Live Chat</h5>
+                        <p class="mb-2">Available 9AM - 8PM ET</p>
+                        <button class="btn btn-sm btn-outline-primary">Start Chat</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact form -->
+            <div class="col-md-8">
+                <div class="contact-card">
+                    <h3 class="mb-4">Send Us a Message</h3>
+                    <p class="mb-4">Have a question, concern, or feedback? Fill out the form below and we'll get back to you as soon as possible.</p>
+                    
+                    <form id="contactForm">
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject</label>
+                            <select class="form-select" id="subject" required>
+                                <option value="" selected disabled>Select a subject</option>
+                                <option value="account">Account Issues</option>
+                                <option value="transaction">Transaction Problems</option>
+                                <option value="technical">Technical Support</option>
+                                <option value="feedback">Feedback</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="name" placeholder="Your full name" required>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" placeholder="Your email address" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone Number (Optional)</label>
+                                <input type="tel" class="form-control" id="phone" placeholder="Your phone number">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="accountNumber" class="form-label">Account Number (Optional)</label>
+                            <input type="text" class="form-control" id="accountNumber" placeholder="Your account number if applicable">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control" id="message" rows="5" placeholder="Please describe your issue or inquiry in detail..." required></textarea>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="attachStatements">
+                            <label class="form-check-label" for="attachStatements">Attach recent account statements</label>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="urgentFlag">
+                            <label class="form-check-label" for="urgentFlag">Mark as urgent</label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" onclick="submitForm(event)">
+                            <i class="fas fa-paper-plane me-2"></i>Send Message
+                        </button>
+                    </form>
+                    
+                    <!-- Success message (initially hidden) -->
+                    <div class="success-message" id="successMessage">
+                        <h4><i class="fas fa-check-circle me-2"></i>Message Sent Successfully!</h4>
+                        <p>Thank you for contacting us. Our team will review your message and get back to you within 24 hours.</p>
+                        <p>Your reference number: <strong id="referenceNumber">REF-12345</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function submitForm(event) {
+            event.preventDefault();
+            
+            // Validate form
+            const form = document.getElementById('contactForm');
+            if (!form.checkValidity()) {
+                event.stopPropagation();
+                form.classList.add('was-validated');
+                return;
+            }
+            
+            // Hide the form
+            form.style.display = 'none';
+            
+            // Generate a random reference number
+            const refNumber = 'REF-' + Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('referenceNumber').textContent = refNumber;
+            
+            // Show success message
+            document.getElementById('successMessage').style.display = 'block';
+            
+            // In a real application, here you would send the form data to the server
+            console.log("Form submitted! In a real app, this would be sent to the server.");
+        }
+    </script>
+</body>
+</html>

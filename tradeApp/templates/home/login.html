@@ -1,0 +1,463 @@
+{% load static %}
+{% load socialaccount %}
+
+
+<!DOCTYPE html>
+<html class="theme-light" lang="en">
+  <!-- header -->
+  {% include 'base/authHeader.html' %}
+
+  <style>
+    .error-message {
+  color: #dc3545;
+  font-size: 14px;
+  margin-top: 5px;
+}
+  </style>
+
+  <body class="blank page-register">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-KBDR983M"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <!-- Perfomance monitoring -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+      import { getPerformance } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-performance.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDF4Nd5rP-y-RI_TilZvj_TJLI2XO-g0Ls",
+        authDomain: "pocketoption-2f478.firebaseapp.com",
+        databaseURL: "https://pocketoption-2f478.firebaseio.com",
+        projectId: "pocketoption-2f478",
+        storageBucket: "pocketoption-2f478.appspot.com",
+        messagingSenderId: "602028090392",
+        appId: "1:602028090392:web:ec99330a76e80254e94f6d",
+        measurementId: "G-1JEDFHE9YB",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      // Initialize Performance Monitoring
+      const performance = getPerformance(app);
+    </script>
+    <!-- End perfomance monitoring -->
+    <div class="portrait-dummy"></div>
+
+    <div class="wrapper">
+      <div class="wrapper__top">
+        <header class="site-header">
+          <div class="login-container">
+            <a class="site-header__back-btn" href="/">To home page</a>
+            <div class="site-header__end">
+              <div class="languages js-languages">
+                <p class="languages__title">
+                  <svg
+                    class="svg-icon language-icon"
+                    width="25"
+                    height="25"
+                    viewBox="0 0 25 25"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g clip-path="url(#a5980)">
+                      <path
+                        d="M12.5 24.919c-1.645 0-3.198-.315-4.658-.946a12.164 12.164 0 0 1-3.82-2.576 12.165 12.165 0 0 1-2.576-3.82A11.619 11.619 0 0 1 .5 12.919c0-1.658.315-3.214.946-4.668a12.197 12.197 0 0 1 2.576-3.81 12.166 12.166 0 0 1 3.82-2.576C9.302 1.235 10.855.92 12.5.92c1.658 0 3.214.315 4.668.946 1.453.63 2.723 1.49 3.81 2.576a12.197 12.197 0 0 1 2.576 3.81c.63 1.454.946 3.01.946 4.668a11.62 11.62 0 0 1-.946 4.658 12.166 12.166 0 0 1-2.576 3.82 12.195 12.195 0 0 1-3.81 2.576c-1.454.63-3.01.946-4.668.946Zm0-1.922a17.26 17.26 0 0 0 1.628-2.587c.44-.87.799-1.82 1.076-2.852H9.796c.293 1.064.656 2.031 1.089 2.901.432.87.97 1.716 1.615 2.538Zm-2.446-.347a13.7 13.7 0 0 1-1.305-2.37 15.497 15.497 0 0 1-.898-2.722H3.566a9.902 9.902 0 0 0 2.684 3.307 9.017 9.017 0 0 0 3.804 1.785Zm4.892 0a9.016 9.016 0 0 0 3.804-1.785 9.902 9.902 0 0 0 2.684-3.306H17.15a19.84 19.84 0 0 1-.96 2.734c-.385.885-.8 1.67-1.243 2.357ZM2.771 15.664h4.696c-.08-.47-.137-.93-.173-1.381a17.331 17.331 0 0 1 0-2.728c.036-.451.094-.911.173-1.38H2.771a10.133 10.133 0 0 0-.28 4.151c.066.463.159.909.28 1.338Zm6.59 0h6.278a15.966 15.966 0 0 0 .225-2.745 15.966 15.966 0 0 0-.226-2.745H9.362a15.977 15.977 0 0 0-.225 2.745 15.977 15.977 0 0 0 .226 2.745Zm8.172 0h4.696a10.14 10.14 0 0 0 .28-4.151 9.955 9.955 0 0 0-.28-1.339h-4.696c.08.47.137.93.173 1.381a17.32 17.32 0 0 1 0 2.728c-.036.451-.094.911-.173 1.38Zm-.384-7.385h4.285c-.675-1.328-1.564-2.43-2.666-3.306-1.102-.876-2.376-1.475-3.822-1.797.484.735.915 1.539 1.292 2.412.378.873.681 1.77.911 2.691Zm-7.353 0h5.408a16.254 16.254 0 0 0-1.107-2.918c-.444-.89-.977-1.73-1.597-2.52-.62.79-1.153 1.63-1.597 2.52-.445.89-.814 1.862-1.107 2.918Zm-6.23 0H7.85c.23-.921.533-1.818.91-2.691.378-.873.809-1.677 1.293-2.412-1.454.322-2.73.923-3.828 1.803-1.099.88-1.985 1.98-2.66 3.3Z"
+                        fill="currentColor"
+                      />
+                    </g>
+                    <defs>
+                      <clipPath id="a5980">
+                        <path
+                          fill="currentColor"
+                          transform="translate(.5 .919)"
+                          d="M0 0h24v24H0z"
+                        />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                  <span class="languages__title-text"> English </span>
+                </p>
+                <!-- <ul class="languages__list">
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/ru/register/">
+                                        Русский </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/pt/register/">
+                                        Português </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/es/register/">
+                                        Español </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/it/register/">
+                                        Italiano </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/pl/register/">
+                                        Polski </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/id/register/">
+                                        Indonesian </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/fr/register/">
+                                        Français </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/th/register/">
+                                        Thai </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/vt/register/">
+                                        Tiếng Việt </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/ar/register/">
+                                        العربية </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/ms/register/">
+                                        Malay </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/zh/register/">
+                                        中文 </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/tr/register/">
+                                        Türkçe </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/ja/register/">
+                                        日本語 </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/ko/register/">
+                                        한국어 </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/fa/register/">
+                                        فارسی </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/sr/register/">
+                                        Српски </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/ro/register/">
+                                        Română </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/hr/register/">
+                                        Hrvatski </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/hi/register/">
+                                        हिन्दी </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/el/register/">
+                                        ελληνικά </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/bn/register/">
+                                        বাংলা </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/uk/register/">
+                                        Українська </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/fi/register/">
+                                        Pilipinas </a>
+                                </li>
+                                <li class="languages__item">
+                                    <a class="languages__link" href="/sw/register/">
+                                        Kiswahili </a>
+                                </li>
+                            </ul> -->
+              </div>
+            </div>
+          </div>
+        </header>
+      </div>
+      <div class="wrapper__center">
+        <div class="site-content">
+          <div class="site-content-in" style="height: 100%">
+            <!-- begin login -->
+            <div class="login login-v2">
+              {% if messages %} {% for message in messages %}
+              <div class="alert alert-{{message.tags}}" style="color: purple">
+                {{message}}
+              </div>
+              {% endfor %} {% endif %}
+              <!-- begin brand -->
+              <div class="login-header">
+                <div class="brand">
+                  <!-- Image goes here -->
+                  <a href="/">
+                                    <img src="../../static/image/logo.png" alt="logo" width="50px" height="50px">
+                                 </a>
+                  <h1>Sign In</h1>
+                </div>
+              </div>
+              <!-- end brand -->
+
+              <div class="login-content">
+                <p class="login-content__redirect">
+                  Not registered yet? <a href="/register">Registration</a>
+                </p>
+                <div class="ajax-message js-message"></div>
+
+                <form method="post" class="form-with-label">
+                  {% csrf_token %}
+                  <!-- <input type="hidden" name="submitLogin" value="1" /> -->
+                  <div class="form-group form-group_with-label email-container">
+                    <input
+                      type="email"
+                      name="username"
+                      value=""
+                      class="form-control"
+                      required="1"
+                      placeholder="Email *"
+                      id="id_username"
+                    />
+                    
+ {% if form.username.errors %}
+        <div class="error-message">{{ form.username.errors }}</div>
+      {% endif %}
+                    <label for="username">Email <span>*</span></label>
+                  </div>
+                  <div
+                    class="form-group form-group_with-label password-container password-container"
+                  >
+                    <input
+                      type="password"
+                      name="password"
+                      value=""
+                      id="password"
+                      class="form-control js-f-pswd-input"
+                      required="1"
+                      autocomplete="off"
+                      placeholder="Password *"
+                    />
+                    {% if form.password.errors %}
+        <div class="error-message">{{ form.password.errors }}</div>
+      {% endif %}
+                   
+
+                    <label for="password">Password <span>*</span></label>
+                  </div>
+
+                   {% if form.non_field_errors %}
+      <div class="error-message">
+        {% for error in form.non_field_errors %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+                  <br />
+
+                  <div class="form-bottom rules">
+                    <div class="form-bottom rules form-bottom_2-col">
+                      <div class="checkbox">
+                        <div class="checkbox clearfix m-b-0">
+                          <p class="ruls">
+                            <label>
+                              <input
+                                type="checkbox"
+                                name="remember"
+                                value="1"
+                              />Remember me
+                            </label>
+                          </p>
+                        </div>
+                      </div>
+                      <!-- <div class="recovery-link">
+                        <a href="/">Password recovery</a>
+                      </div> -->
+                    </div>
+                  </div>
+                  <div
+                    class="form-group js-recaptcha-block recaptcha-block hidden"
+                  >
+                    <div
+                      class="js-recaptcha-widget g-recaptcha"
+                      data-name="register"
+                      data-callback="verifyCallback"
+                      data-hl="en"
+                    ></div>
+                    <!-- <script>
+                      function verifyCallback() {
+                        const form = document.querySelector(
+                          ".page-register .login-content form"
+                        );
+                        form.dispatchEvent(
+                          new CustomEvent("submit", { cancelable: true })
+                        );
+                      }
+                    </script> -->
+                  </div>
+                  <div class="form-group">
+                    <button class="btn btn-green-light btn-block" type="submit">
+                      Sign In
+                    </button>
+                  </div>
+                  <div class="form-group social-container">
+                    <p class="social-container__title">Or login with</p>
+                    <div class="register-social">
+                      <a
+                        class="social-btn social-btn--gp"
+                        href="{% provider_login_url 'google' %}"
+                        style="
+                          display: flex;
+                          justify-content: center;
+                          align-items: center;
+                          gap: 8px;
+                        "
+                      >
+                        <img
+                          src="data:image/png;base64,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"
+                          width="30px"
+                          height="30px"
+                          style="border-radius: 50%"
+                          alt=""
+                        />
+                        <p>Google</p>
+                      </a>
+                    </div>
+                  </div>
+
+                  <input
+                    type="hidden"
+                    name="register_page"
+                    value="3389120560307"
+                  />
+                </form>
+              </div>
+            </div>
+          </div>
+          <!-- .site-content-in -->
+        </div>
+        <!-- .site-content -->
+      </div>
+      <!-- .wrapper__center -->
+
+      <!-- <div class="wrapper__bottom">
+        <div class="login-container">
+          <div class="login-footer">
+            <ul class="login-footer-nav">
+              <li class="login-footer-nav__item">
+                <a
+                  class="login-footer-nav__link"
+                  href="https://pocketoption.com/en/contacts/"
+                  >Contacts</a
+                >
+              </li>
+              <li class="login-footer-nav__item">
+                <a
+                  class="login-footer-nav__link"
+                  href="https://pocketoption.com/en/aml-policy/"
+                  >AML and KYC policy</a
+                >
+              </li>
+              <li class="login-footer-nav__item">
+                <a
+                  class="login-footer-nav__link"
+                  href="https://pocketoption.com/en/payment-policy/"
+                  >Payment policy</a
+                >
+              </li>
+              <li class="login-footer-nav__item">
+                <a
+                  class="login-footer-nav__link"
+                  href="https://pocketoption.com/en/public-offer/"
+                  >Terms and Conditions</a
+                >
+              </li>
+              <li class="login-footer-nav__item">
+                <a
+                  class="login-footer-nav__link"
+                  href="https://pocketoption.com/pdf/po_trade/po_privacy_en.pdf"
+                  >Privacy policy</a
+                >
+              </li>
+              <li class="login-footer-nav__item">
+                <a
+                  class="login-footer-nav__link"
+                  href="https://pocketoption.com/en/responsibility-disclosure/"
+                  >Information disclosure</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="login-socket">
+            Copyright &copy;2025 Pocket Option
+            <svg
+              width="40"
+              height="40"
+              viewBox="0 0 40 40"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M33.1543 13.1641C30.6543 8.41406 25.6551 5.16406 19.9551 5.16406C11.8551 5.16406 5.1543 11.8044 5.1543 19.9844C5.1543 28.1544 11.8551 34.7939 19.9551 34.7939C25.5551 34.7939 30.4551 31.7143 32.9551 27.1543L33.0547 26.9844C33.7547 25.8944 35.4543 26.644 34.6543 28.164C31.7543 33.314 26.2551 36.7939 19.9551 36.7939C10.6551 36.7939 3.1543 29.2644 3.1543 19.9844C3.1543 10.6944 10.6551 3.16406 19.9551 3.16406C26.3551 3.16406 31.8539 6.674 34.7539 11.854L34.6543 11.8442C35.4543 13.2942 33.8543 14.0541 33.1543 13.1641ZM18.5547 24.2641C19.0547 24.2641 19.4551 24.6741 19.4551 25.1841C19.4551 25.2141 19.4551 25.2339 19.4551 25.2739C19.4551 25.7739 19.0547 26.1841 18.5547 26.1841C16.8547 26.1841 13.1551 26.1841 11.4551 26.1841C11.1551 26.1841 10.9539 26.084 10.7539 25.894C10.5539 25.704 10.4551 25.4443 10.4551 25.1743C10.4551 25.1443 10.4551 25.1242 10.4551 25.0942C10.4551 24.8242 10.5539 24.5542 10.7539 24.3642C11.8539 23.3442 15.2539 20.0542 15.2539 20.0542C15.8539 19.5242 16.1535 19.0643 16.3535 18.6743C16.5535 18.2843 16.6543 17.9041 16.6543 17.5141C16.6543 16.9441 16.4543 16.5041 16.1543 16.2041C15.7543 15.9041 15.1551 15.7539 14.4551 15.7539C13.4551 15.7539 12.7543 15.9841 12.1543 16.4541C11.7543 16.7441 11.2535 16.7541 10.8535 16.4741C10.8535 16.5041 10.8535 16.5039 10.8535 16.5039C10.6535 16.3039 10.4551 16.0041 10.4551 15.6841C10.4551 15.3641 10.6535 15.064 10.8535 14.874C11.1535 14.664 11.5535 14.4742 11.8535 14.3042C12.6535 13.9542 13.5547 13.7739 14.5547 13.7739C15.9547 13.7739 16.8543 14.0941 17.6543 14.7241C18.3543 15.3441 18.7539 16.2042 18.7539 17.2842C18.7539 17.9542 18.6535 18.5743 18.3535 19.1543C18.0535 19.7443 17.7551 20.4043 16.9551 21.1543L13.6543 24.2641H18.5547ZM23.7539 24.334V15.854H22.1543C21.5543 15.854 21.1543 15.4343 21.1543 14.9043C21.1543 14.3743 21.5543 13.9541 22.1543 13.9541C22.8543 13.9541 23.8543 13.9541 24.6543 13.9541C24.9543 13.9541 25.2551 14.0739 25.4551 14.2939C25.6551 14.5239 25.8535 14.824 25.8535 15.144V24.334H27.2539C27.7539 24.334 28.1543 24.7241 28.1543 25.2041C28.1543 25.2441 28.1543 25.2739 28.1543 25.3139C28.1543 25.7939 27.7539 26.1841 27.2539 26.1841H22.3535C21.8535 26.1841 21.4551 25.7939 21.4551 25.3139C21.4551 25.2739 21.4551 25.2441 21.4551 25.2041C21.4551 24.7241 21.8535 24.334 22.3535 24.334H23.7539ZM33.8535 18.9844H31.5547C31.0547 18.9844 30.5547 19.4244 30.5547 19.9844C30.5547 20.5344 31.0547 20.9844 31.5547 20.9844H33.8535V23.2641C33.8535 23.8141 34.3535 24.2641 34.8535 24.2641C35.4535 24.2641 35.8535 23.8141 35.8535 23.2641V20.9844H38.1543C38.7543 20.9844 39.1543 20.5344 39.1543 19.9844C39.1543 19.4244 38.7543 18.9844 38.1543 18.9844H35.8535V16.7041C35.8535 16.1441 35.4535 15.7041 34.8535 15.7041C34.3535 15.7041 33.8535 16.1441 33.8535 16.7041V18.9844Z"
+                class="svg-fill"
+                fill-opacity="0.7"
+              />
+            </svg>
+          </div>
+        </div>
+      </div> -->
+    </div>
+    <!-- .wrapper -->
+    <script src="{% static 'js/register.js'%}"></script>
+
+    <!-- <script>
+      window.recaptchaWidgets = {};
+
+      function onloadRecaptchaCallback() {
+        renderRecaptchaWidgets();
+      }
+
+      function renderRecaptchaWidgets() {
+        const recaptchaWidgets = document.querySelectorAll(
+          ".js-recaptcha-widget"
+        );
+        if (!recaptchaWidgets) {
+          return;
+        }
+
+        const params = {
+          sitekey: "6LcU2hgUAAAAAPHmrOrfTDy6DnROjq7Mr8LNwhNF",
+          theme: "light",
+        };
+
+        recaptchaWidgets.forEach(function (recaptchaWidget) {
+          if (recaptchaWidget.dataset.callback) {
+            params["callback"] = recaptchaWidget.dataset.callback;
+          }
+          if (recaptchaWidget.dataset.hl) {
+            params["hl"] = recaptchaWidget.dataset.hl;
+          }
+          window.recaptchaWidgets[recaptchaWidget.dataset.name] =
+            grecaptcha.render(recaptchaWidget, params);
+        });
+      }
+    </script> -->
+  </body>
+</html>

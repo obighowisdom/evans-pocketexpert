@@ -1,0 +1,374 @@
+<style>
+  body {
+    background-color: #111;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Sidebar Styles */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    background-color: #1a1a40; /* Darker blue background */
+    color: white;
+    padding-top: 20px;
+    transition: all 0.3s;
+    z-index: 1000;
+  }
+
+  .sidebar-header {
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+
+  .sidebar-logo {
+    font-weight: 700;
+    font-size: 1.5rem;
+  }
+
+  .nav-item {
+    margin-bottom: 5px;
+  }
+
+  .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s;
+    border-radius: 0 30px 30px 0;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+
+  .nav-link i {
+    width: 24px;
+    text-align: center;
+  }
+
+  .content-wrapper {
+    margin-left: 250px;
+    transition: all 0.3s;
+    width: calc(100% - 250px);
+  }
+
+  /* Toggle Button for mobile */
+  .sidebar-toggle {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1001;
+    display: none;
+    background-color: #1a1a40; /* Match sidebar color */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+  }
+
+  /* Header Styles */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .user-name {
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin: 0;
+  }
+
+  .add-money-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 20px;
+    padding: 6px 15px;
+    color: #212529;
+    font-weight: 500;
+  }
+
+  .add-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    background-color: #512888;
+    color: white;
+    border-radius: 50%;
+    font-size: 14px;
+  }
+
+  .account-card {
+    background-color: #1a1a40;
+    color: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px;
+    text-align: center;
+  }
+
+  .balance-title {
+    font-weight: 500;
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+
+  .balance-amount {
+    font-weight: 700;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+  }
+
+  .action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+
+  .action-button {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 15px;
+    flex: 1;
+    margin: 0 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+  }
+
+  .action-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .spend-icon {
+    background-color: #6c7cd0;
+  }
+
+  .save-icon {
+    background-color: #ff9d42;
+  }
+
+  .borrow-icon {
+    background-color: #62d26f;
+  }
+
+  .favorites-section {
+    padding: 0 20px;
+    margin-top: 30px;
+  }
+
+  .favorites-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin: 0;
+  }
+
+  .edit-link {
+    color: #512888;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .favorites-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .favorite-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+  }
+
+  .favorite-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #e9ecff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .favorite-label {
+    font-weight: 500;
+    margin-top: 8px;
+  }
+
+  /* Responsive Styles */
+  @media (max-width: 991px) {
+    .sidebar {
+      transform: translateX(-250px);
+    }
+
+    .sidebar.active {
+      transform: translateX(0);
+    }
+
+    .content-wrapper {
+      margin-left: 0;
+      width: 100%;
+    }
+
+    .content-wrapper.sidebar-active {
+      margin-left: 250px;
+    }
+
+    .sidebar-toggle {
+      display: block;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .action-button {
+      margin: 5px 0;
+    }
+
+    .header {
+      padding-left: 50px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .favorites-grid {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .favorite-item {
+      margin-bottom: 20px;
+    }
+
+    .user-name {
+      font-size: 1rem;
+    }
+
+    .balance-amount {
+      font-size: 2rem;
+    }
+  }
+</style>
+
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo"><img src="../../static/image/logo.png" alt="logo" width="50px" height="50px"></div>
+  </div>
+  <ul class="nav flex-column">
+    <li class="nav-item">
+      <a class="nav-link" href="/dashboard">
+        <i class="fas fa-home"></i>
+        Dashboard
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/deposit">
+        <i class="fas fa-arrow-down"></i>
+        Deposit
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/withdraw">
+        <i class="fas fa-arrow-up"></i>
+        Withdraw
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/contact">
+        <i class="fas fa-user"></i>
+        Contact
+      </a>
+    </li>
+  </ul>
+
+  <form action="{% url 'tradeAppurl:logout' %}" method="post" style="display: flex; justify-content: center; margin-top: 20px;" >
+    {% csrf_token %} 
+    <button style="background-color: white; color: red; font-weight: 600; border-radius: 50px; border: none; width: 100%; padding: 10px;" type="submit">Logout</button>
+  </form>
+</div>
+
+<script>
+  // Toggle sidebar on mobile
+  document
+    .getElementById("sidebarToggle")
+    .addEventListener("click", function () {
+      document.getElementById("sidebar").classList.toggle("active");
+      document.getElementById("content").classList.toggle("sidebar-active");
+    });
+
+  // Close sidebar when clicking outside on mobile
+  document.addEventListener("click", function (event) {
+    const sidebar = document.getElementById("sidebar");
+    const sidebarToggle = document.getElementById("sidebarToggle");
+
+    if (window.innerWidth < 992) {
+      if (
+        !sidebar.contains(event.target) &&
+        !sidebarToggle.contains(event.target) &&
+        sidebar.classList.contains("active")
+      ) {
+        sidebar.classList.remove("active");
+        document.getElementById("content").classList.remove("sidebar-active");
+      }
+    }
+  });
+
+  // Reset sidebar state on window resize
+  window.addEventListener("resize", function () {
+    if (window.innerWidth >= 992) {
+      document.getElementById("sidebar").classList.remove("active");
+      document.getElementById("content").classList.remove("sidebar-active");
+    }
+  });
+</script>
