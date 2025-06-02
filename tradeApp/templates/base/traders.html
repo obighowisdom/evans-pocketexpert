@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Crypto Currency Traders</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        
+        .container {
+            max-width: 100%;
+            margin-top: 20px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .card-header {
+            background-color: #0d1e42;
+            color: white;
+            border-bottom: none;
+            font-weight: 600;
+            padding: 20px;
+        }
+        .trader-table {
+            margin-bottom: 0;
+        }
+        .trader-table th {
+            background-color: #0d1e42;
+            color: white;
+            border-color: #19346e;
+            font-weight: 500;
+        }
+        .trader-table td {
+            vertical-align: middle;
+        }
+        .trader-row:nth-child(odd) {
+            background-color: rgba(13, 30, 66, 0.05);
+        }
+        .trader-row:hover {
+            background-color: rgba(13, 30, 66, 0.1);
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #0d1e42;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .trader-name {
+            font-weight: 600;
+            color: #0d1e42;
+        }
+        .comment {
+            max-width: 300px;
+            font-style: italic;
+            color: #666;
+        }
+        .profit {
+            font-weight: 600;
+            color: #28a745;
+        }
+        .loss {
+            font-weight: 600;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header text-center">
+                <h3>Top Cryptocurrency Traders - Performance Report</h3>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-borderless trader-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Trader</th>
+                                <th scope="col">Portfolio Value</th>
+                                <th scope="col">30-Day Return</th>
+                                <th scope="col">Top Asset</th>
+                                <th scope="col">Latest Comment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="trader-row">
+                                <td>1</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar">AS</div>
+                                        <span class="trader-name">Alex Smith</span>
+                                    </div>
+                                </td>
+                                <td>$8.2M</td>
+                                <td class="profit">+24.6%</td>
+                                <td>Bitcoin (BTC)</td>
+                                <td class="comment">"Layer-2 solutions are where the smart money is heading this quarter."</td>
+                            </tr>
+                            <tr class="trader-row">
+                                <td>2</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar">JC</div>
+                                        <span class="trader-name">Jennifer Chen</span>
+                                    </div>
+                                </td>
+                                <td>$5.7M</td>
+                                <td class="profit">+19.8%</td>
+                                <td>Ethereum (ETH)</td>
+                                <td class="comment">"The merge success signals a bullish cycle for all proof-of-stake assets."</td>
+                            </tr>
+                            <tr class="trader-row">
+                                <td>3</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar">MJ</div>
+                                        <span class="trader-name">Michael Jones</span>
+                                    </div>
+                                </td>
+                                <td>$4.9M</td>
+                                <td class="profit">+15.2%</td>
+                                <td>Solana (SOL)</td>
+                                <td class="comment">"Market volatility creates opportunities for those with strategic patience."</td>
+                            </tr>
+                            <tr class="trader-row">
+                                <td>4</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar">SD</div>
+                                        <span class="trader-name">Sarah Davis</span>
+                                    </div>
+                                </td>
+                                <td>$3.8M</td>
+                                <td class="loss">-2.7%</td>
+                                <td>Avalanche (AVAX)</td>
+                                <td class="comment">"Regulatory clarity will be the biggest price catalyst in the coming months."</td>
+                            </tr>
+                            <tr class="trader-row">
+                                <td>5</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar">RK</div>
+                                        <span class="trader-name">Raj Kumar</span>
+                                    </div>
+                                </td>
+                                <td>$3.2M</td>
+                                <td class="profit">+11.9%</td>
+                                <td>Cardano (ADA)</td>
+                                <td class="comment">"DeFi protocols are undervalued considering their real-world adoption metrics."</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
