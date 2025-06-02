@@ -130,11 +130,6 @@ DATABASES = {
     }
 }
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://evans-pocketexpert.onrender.com/',
-    'https://pocketxperts.com/'
-   
-]
 
 
 # Password validation
@@ -158,6 +153,13 @@ AUTH_PASSWORD_VALIDATORS = [
 SITE_ID = 1
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://evans-pocketexpert.onrender.com/',
+    'https://pocketxperts.com/'
+   
+]
+
 
 LANGUAGE_CODE = 'en-us'
 
