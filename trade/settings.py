@@ -155,8 +155,8 @@ SITE_ID = 1
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://evans-pocketexpert.onrender.com/',
-    'https://pocketxperts.com/'
+    'https://evans-pocketexpert.onrender.com',
+    'https://pocketxperts.com'
    
 ]
 
