@@ -130,6 +130,12 @@ DATABASES = {
     }
 }
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://evans-pocketexpert.onrender.com/',
+    'https://pocketxperts.com/'
+   
+]
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
