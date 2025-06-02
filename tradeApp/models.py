@@ -66,6 +66,7 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
     
+    objects = CustomUserManager()
     # Add this method for compatibility with allauth
     def get_username(self):
         return self.email
