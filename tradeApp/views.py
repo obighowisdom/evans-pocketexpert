@@ -83,7 +83,7 @@ def policy(request):
 @login_required()
 def dashboard(request):
     
-    return render(request, 'dashboard/admin.html')
+    return render(request, 'dashboard/home.html')
 
 @login_required()
 def deposit(request):

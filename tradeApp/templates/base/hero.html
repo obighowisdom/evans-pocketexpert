@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Trading Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+            color: white;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+        }
+
+        /* Gold particles overlay */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #ffd700;
+            border-radius: 50%;
+            animation: sparkle 4s linear infinite;
+        }
+
+        .particle:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { top: 60%; left: 90%; animation-delay: 1s; }
+        .particle:nth-child(3) { top: 80%; left: 20%; animation-delay: 2s; }
+        .particle:nth-child(4) { top: 30%; left: 70%; animation-delay: 3s; }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header with smooth slide-in animation */
+        header {
+            padding: 20px 0;
+            animation: slideDown 1s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: goldShimmer 3s ease-in-out infinite;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes goldShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 8px 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: #ffd700;
+            transform: translateY(-2px);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .language-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            cursor: pointer;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .language-selector:hover {
+            background: rgba(255, 215, 0, 0.1);
+            color: #ffd700;
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 4px;
+            padding: 5px;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .menu-toggle:hover span {
+            background: #ffd700;
+            transform: scaleX(1.1);
+        }
+
+        /* Promo Banner with slide-in animation */
+        .promo-banner {
+            margin: 40px 0;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 50%, rgba(255, 215, 0, 0.1) 100%);
+            border: 2px solid;
+            border-image: linear-gradient(45deg, #ffd700, transparent, #ffd700) 1;
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+            animation: slideInLeft 1s ease-out 0.3s both;
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .promo-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .promo-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 25px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .promo-text h2 {
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .promo-text p {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.7;
+            font-size: 1.1rem;
+        }
+
+        .participate-btn {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+            background-size: 200% 200%;
+            color: #000;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3); }
+            50% { box-shadow: 0 12px 35px rgba(255, 215, 0, 0.6); }
+        }
+
+        .participate-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            background-position: 100% 100%;
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Image placeholder for promo */
+        .promo-image {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            animation: spin 20s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Main Content with staggered animations */
+        .main-content {
+            margin: 100px 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .content-left {
+            animation: slideInRight 1s ease-out 0.6s both;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(-80px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .content-left h1 {
+            font-size: 4rem;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #ffffff 0%, #ffd700 50%, #ffffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 4s ease-in-out infinite;
+        }
+
+        @keyframes textShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .content-left .subtitle {
+            font-size: 1.3rem;
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-weight: 600;
+            animation: fadeInUp 1s ease-out 0.8s both;
+        }
+
+        @keyframes fadeInUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .content-left .description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            margin-bottom: 50px;
+            line-height: 1.7;
+            animation: fadeInUp 1s ease-out 1s both;
+        }
+
+        .cta-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            align-items: flex-start;
+            animation: fadeInUp 1s ease-out 1.2s both;
+        }
+
+        .register-btn {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+            background-size: 200% 200%;
+            color: #000;
+            border: none;
+            padding: 18px 45px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 35px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .register-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .register-btn:hover::before {
+            left: 100%;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            background-position: 100% 100%;
+            box-shadow: 0 20px 50px rgba(255, 215, 0, 0.6);
+        }
+
+        .login-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 10px 0;
+        }
+
+        .login-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #ffd700;
+            transition: width 0.3s ease;
+        }
+
+        .login-link:hover::after {
+            width: 100%;
+        }
+
+        .login-link:hover {
+            color: #ffd700;
+            transform: translateX(5px);
+        }
+
+        .content-right {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: slideInLeft 1s ease-out 0.9s both;
+        }
+
+        /* Main hero image placeholder */
+        .hero-image {
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(255, 215, 0, 0.1) 50%, rgba(0, 0, 0, 0.8) 100%);
+            border: 2px solid #ffd700;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-image::before {
+            content: 'TRADING INTERFACE';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffd700;
+            font-size: 0.9rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .chart-mockup {
+            width: 80%;
+            height: 60%;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 8px;
+            padding: 20px;
+        }
+
+        .trading-bars {
+            display: flex;
+            gap: 6px;
+            align-items: flex-end;
+            height: 100%;
+        }
+
+        .bar {
+            width: 15px;
+            background: linear-gradient(to top, #ffd700, #ffed4e);
+            border-radius: 3px;
+            animation: barGrow 2s ease-in-out infinite alternate;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .bar:nth-child(1) { height: 30%; animation-delay: 0s; }
+        .bar:nth-child(2) { height: 60%; animation-delay: 0.3s; }
+        .bar:nth-child(3) { height: 40%; animation-delay: 0.6s; }
+        .bar:nth-child(4) { height: 80%; animation-delay: 0.9s; }
+        .bar:nth-child(5) { height: 50%; animation-delay: 1.2s; }
+
+        @keyframes barGrow {
+            0% { transform: scaleY(0.7); opacity: 0.7; }
+            100% { transform: scaleY(1.3); opacity: 1; }
+        }
+
+        /* Animated line chart overlay */
+        .chart-line {
+            position: absolute;
+            top: 30%;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ffd700, #00ff00, #ffd700, transparent);
+            animation: lineMove 3s ease-in-out infinite;
+        }
+
+        @keyframes lineMove {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Price indicators */
+        .price-indicators {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .price-indicator {
+            background: rgba(255, 215, 0, 0.2);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: #ffd700;
+            animation: priceFlicker 2s ease-in-out infinite alternate;
+        }
+
+        .price-indicator:nth-child(2) { animation-delay: 0.5s; }
+        .price-indicator:nth-child(3) { animation-delay: 1s; }
+
+        @keyframes priceFlicker {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        /* Secondary images placeholders */
+        .secondary-images {
+            position: absolute;
+            top: -20px;
+            right: -30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .secondary-img {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            animation: float 4s ease-in-out infinite;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .secondary-img:nth-child(2) { animation-delay: 1s; }
+        .secondary-img:nth-child(3) { animation-delay: 2s; }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 60px;
+                text-align: center;
+            }
+            
+            .content-left h1 {
+                font-size: 3rem;
+            }
+
+            .cta-buttons {
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .promo-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .content-left h1 {
+                font-size: 2.5rem;
+            }
+
+            .main-content {
+                margin: 60px 0;
+            }
+
+            .register-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .secondary-images {
+                position: relative;
+                flex-direction: row;
+                justify-content: center;
+                top: 20px;
+                right: 0;
+                margin-top: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .content-left h1 {
+                font-size: 2rem;
+                letter-spacing: 1px;
+            }
+
+            .promo-banner {
+                padding: 25px;
+                margin: 30px 0;
+            }
+
+            .promo-text h2 {
+                font-size: 1.4rem;
+            }
+
+            .hero-image {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    
+    <div class="container">
+        <header>
+            <nav>
+                <div class="logo">D</div>
+                <ul class="nav-links">
+                    <li><a href="#quickstart">Quick start</a></li>
+                    <li><a href="#about">About us</a></li>
+                </ul>
+                <div class="nav-right">
+                    <div class="language-selector">
+                        <span>🌐</span>
+                        <span>English</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="menu-toggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <div class="promo-banner">
+            <div class="promo-content">
+                <div class="promo-text">
+                    <h2>THE GREAT 8 Celebration</h2>
+                    <p>Tap the button to be among the first to receive updates about the promo launch and full details on how to join.</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <button class="participate-btn">
+                        🎁 PARTICIPATE
+                    </button>
+                    <div class="promo-image">🎉</div>
+                </div>
+            </div>
+        </div>
+
+        <main class="main-content">
+            <div class="content-left">
+                <div class="subtitle">The most user-friendly interface</div>
+                <h1>The Right Place for Online Trading on Financial Markets</h1>
+                <p class="description">Get access to trade over 100 global trading assets</p>
+                <div class="cta-buttons">
+                    <button class="register-btn">REGISTRATION</button>
+                    <a href="#login" class="login-link">Log In</a>
+                </div>
+            </div>
+            <div class="content-right">
+                <div class="hero-image">
+                    <div class="chart-mockup">
+                        <div class="chart-line"></div>
+                        <div class="trading-bars">
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                        </div>
+                    </div>
+                    <div class="price-indicators">
+                        <div class="price-indicator">$45,123</div>
+                        <div class="price-indicator">+2.4%</div>
+                        <div class="price-indicator">📈</div>
+                    </div>
+                </div>
+                <div class="secondary-images">
+                    <div class="secondary-img">💰</div>
+                    <div class="secondary-img">📊</div>
+                    <div class="secondary-img">⚡</div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
