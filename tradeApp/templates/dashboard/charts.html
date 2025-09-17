@@ -1,0 +1,1042 @@
+{% extends 'dashboard/base.html' %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crypto Trading</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+      .price-up {
+        color: green;
+      }
+      .price-down {
+        color: red;
+      }
+      .coin-row:hover {
+        background: #f8f9fa;
+        cursor: pointer;
+      }
+      .timeframe-btn {
+        margin: 2px;
+      }
+      .loading {
+        opacity: 0.6;
+      }
+      .pagination-controls {
+        margin: 10px 0;
+      }
+      .wallet-wrapper {
+        width: 100%;
+        max-width: 100%; /* default for mobile */
+        margin: 0 auto;
+      }
+
+      /* Tablet screens (≥768px up to <1200px) */
+      @media (min-width: 768px) {
+        .wallet-wrapper {
+          max-width: 600px;
+        }
+      }
+
+      /* Large screens (≥1200px) */
+      @media (min-width: 1200px) {
+        .wallet-wrapper {
+          max-width: 1200px;
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="wallet-wrapper bg-light"
+    style="margin-right: 45px; margin-bottom: 40px"
+  >
+    <div class="w-100">
+      <section class="hero-section">
+        <div class="hero-content">
+          <h1>Balance</h1>
+          <div class="wallet-content">
+            <!-- Total balance = available + locked -->
+            <h2 id="userBalanceDisplay">
+              ${{ user.wallet.amount|add:user.wallet.locked|floatformat:2 }}
+            </h2>
+            <small>
+              Available: ${{ user.wallet.amount|floatformat:2 }} | Locking: ${{
+              user.wallet.locked|floatformat:2 }}
+            </small>
+            <div class="btn-section d-flex justify-content-center gap-2 mt-3">
+              <a href="/deposit"
+                ><button class="btn btn-light btn-sm px-3">Deposit</button></a
+              >
+              <a href="/withdraw"
+                ><button class="btn btn-light btn-sm px-3">Withdraw</button></a
+              >
+            </div>
+          </div>
+        </div>
+        <div class="hero-graphic">
+          <i class="fas fa-coins"></i>
+        </div>
+      </section>
+    </div>
+
+    <div class="wallet-wrapper py-4">
+      <h2 class="mb-4">Enhanced Crypto Market</h2>
+
+      <!-- Search and Pagination -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <input
+            type="text"
+            id="searchInput"
+            class="form-control"
+            placeholder="Search cryptocurrencies..."
+          />
+        </div>
+        <div class="col-md-6">
+          <div class="pagination-controls">
+            <button class="btn btn-outline-primary btn-sm" id="prevPage">
+              Previous
+            </button>
+            <span id="pageInfo" class="mx-3">Page 1 of 1</span>
+            <button class="btn btn-outline-primary btn-sm" id="nextPage">
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Market List -->
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Coin</th>
+              <th>Price (USD)</th>
+              <th>Change (24h)</th>
+              <th>Volume (24h)</th>
+              <th>Market Cap</th>
+            </tr>
+          </thead>
+          <tbody id="marketList">
+            <tr>
+              <td colspan="6" class="text-center">Loading...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Chart + Trade Section -->
+      <div class="row mt-5">
+        <div class="col-lg-8">
+          <div class="card p-3 shadow-sm">
+            <h5 id="chartTitle">BTC/USDT Chart</h5>
+
+            <!-- Timeframe Buttons -->
+            <div id="timeframes" class="mb-3">
+              <button
+                class="btn btn-primary btn-sm timeframe-btn"
+                data-minutes="60"
+              >
+                1H
+              </button>
+              <button
+                class="btn btn-outline-secondary btn-sm timeframe-btn"
+                data-minutes="240"
+              >
+                4H
+              </button>
+              <button
+                class="btn btn-outline-secondary btn-sm timeframe-btn"
+                data-minutes="720"
+              >
+                12H
+              </button>
+              <button
+                class="btn btn-outline-secondary btn-sm timeframe-btn"
+                data-days="1"
+              >
+                1D
+              </button>
+              <button
+                class="btn btn-outline-secondary btn-sm timeframe-btn"
+                data-days="7"
+              >
+                7D
+              </button>
+              <button
+                class="btn btn-outline-secondary btn-sm timeframe-btn"
+                data-days="30"
+              >
+                30D
+              </button>
+            </div>
+
+            <div id="chart"></div>
+            <div id="chartLoading" class="text-center" style="display: none">
+              Loading chart...
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="card p-3 shadow-sm">
+            <h5>Trade</h5>
+            <p id="selectedCoin">Selected: Bitcoin (BTC)</p>
+            <p id="currentPrice" class="small text-muted">
+              Current Price: Loading...
+            </p>
+            <!-- <div class="mb-3">
+              <label class="form-label">Amount (USD)</label>
+              <input
+                type="number"
+                id="tradeAmount"
+                class="form-control"
+                placeholder="Enter amount"
+                min="1"
+              />
+            </div> -->
+            <div class="d-flex gap-2">
+              <button
+                class="btn btn-success w-50"
+                onclick="openTradeModal('up', currentName, currentSymbol, currentPrice)"
+              >
+                Buy Up
+              </button>
+              <button
+                class="btn btn-danger w-50"
+                onclick="openTradeModal('down', currentName, currentSymbol, currentPrice)"
+              >
+                Buy Down
+              </button>
+            </div>
+            <div id="tradeResult" class="mt-3 small"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4" style="margin-top: 20px">
+      <div class="w-100">
+        <div class="text-center rounded p-4" style="background-color: #fff">
+          <div class="pt-1 col-12">
+            <h3 class="text-white">Personal Trading Chart</h3>
+            <div
+              class="tradingview-widget-container"
+              style="margin: 30px 0px 10px 0px"
+            >
+              <div id="tradingview_f933e"></div>
+              <div class="tradingview-widget-copyright">
+                <a href="#" rel="noopener" target="_blank"
+                  ><span class="blue-text"></span>
+                  <span class="blue-text">Personal trading chart</span></a
+                >
+              </div>
+              <script
+                type="text/javascript"
+                src="https://s3.tradingview.com/tv.js"
+              ></script>
+              <script type="text/javascript">
+                new TradingView.widget({
+                  width: "100%",
+                  height: "550",
+                  symbol: "COINBASE:BTCUSD",
+                  interval: "1",
+                  timezone: "Etc/UTC",
+                  theme: "dark",
+                  style: "9",
+                  locale: "en",
+                  toolbar_bg: "#f1f3f6",
+                  enable_publishing: false,
+                  hide_side_toolbar: false,
+                  allow_symbol_change: true,
+                  calendar: false,
+                  studies: ["BB@tv-basicstudies"],
+                  container_id: "tradingview_f933e",
+                });
+              </script>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Buy Modal -->
+    <!-- Trade Modal -->
+    <div class="modal fade" id="tradeModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-light rounded-3 shadow-lg">
+          <!-- Header -->
+          <div class="modal-header border-0">
+            <h5 class="modal-title fw-bold">Confirm Trade</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+
+          <!-- Body -->
+          <div class="modal-body">
+            <!-- Error Message -->
+            <div
+              id="tradeError"
+              class="alert alert-danger py-2 px-3 d-none"
+              role="alert"
+            >
+              <!-- message will be injected by JS -->
+            </div>
+            <div
+              id="tradeError"
+              class="alert alert-danger py-2 px-3 d-none"
+              role="alert"
+            ></div>
+
+            <!-- Success Message -->
+            <div
+              id="tradeSuccess"
+              class="alert alert-success py-2 px-3 d-none"
+              role="alert"
+            ></div>
+
+            <!-- Coin Info -->
+            <div class="d-flex align-items-center mb-3">
+              <div>
+                <h6 id="modalCoin" class="mb-0">BTC/USDT</h6>
+                <small id="modalType" class="badge bg-success">Buy Up</small>
+              </div>
+              <div class="ms-auto text-end">
+                <small class="text-muted">Wallet Balance</small>
+                <div id="modalPrice" class="fw-bold text-success fs-5"></div>
+              </div>
+            </div>
+
+            <!-- Show Balance -->
+            <p class="small mb-2" style="color: white">
+              Available Balance:
+              <strong style="color: white" id="userBalanceDisplay"
+                >${{ user.wallet.amount }}</strong
+              >
+            </p>
+
+            <!-- Charges -->
+            <p style="color: white" class="small mb-3">
+              Trading Fee: <strong>0.2%</strong>
+            </p>
+
+            <!-- Duration Selection -->
+            <label class="form-label fw-semibold">Select Duration</label>
+            <div class="d-flex justify-content-between mb-3">
+              <button
+                class="btn btn-outline-info flex-fill m-1 duration-btn rounded-pill"
+                data-duration="30"
+                data-profit="40"
+              >
+                30s<br /><small>Profit 40%</small>
+              </button>
+              <button
+                class="btn btn-outline-info flex-fill m-1 duration-btn rounded-pill"
+                data-duration="60"
+                data-profit="50"
+              >
+                60s<br /><small>Profit 50%</small>
+              </button>
+              <button
+                class="btn btn-outline-info flex-fill m-1 duration-btn rounded-pill"
+                data-duration="90"
+                data-profit="60"
+              >
+                90s<br /><small>Profit 60%</small>
+              </button>
+            </div>
+
+            <!-- Amount Input -->
+            <label class="form-label fw-semibold">Purchase Amount</label>
+            <input
+              type="number"
+              id="modalAmount"
+              class="form-control mb-3 bg-dark text-light border-secondary"
+              min="10"
+              placeholder="Min $10"
+            />
+
+            <!-- Quick Select -->
+            <div class="d-flex flex-wrap gap-2 mb-3">
+              <button
+                class="btn btn-outline-secondary quick-amount rounded-pill"
+                data-amount="100"
+              >
+                $100
+              </button>
+              <button
+                class="btn btn-outline-secondary quick-amount rounded-pill"
+                data-amount="200"
+              >
+                $200
+              </button>
+              <button
+                class="btn btn-outline-secondary quick-amount rounded-pill"
+                data-amount="300"
+              >
+                $300
+              </button>
+              <button
+                class="btn btn-outline-secondary quick-amount rounded-pill"
+                data-amount="500"
+              >
+                $500
+              </button>
+              <button
+                class="btn btn-outline-secondary quick-amount rounded-pill"
+                data-amount="1000"
+              >
+                $1000
+              </button>
+            </div>
+
+            <!-- Summary -->
+            <div class="p-2 rounded bg-secondary bg-opacity-25">
+              <p class="mb-1">
+                <strong>Expected Profit:</strong>
+                <span id="expectedProfit">$0</span>
+              </p>
+              <p class="mb-0">
+                <strong>Occupation Deposit:</strong>
+                <span id="occupationDeposit">$0</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="modal-footer border-0">
+            <button
+              class="btn btn-primary w-100 rounded-pill py-2 fw-semibold"
+              onclick="confirmTrade()"
+            >
+              Confirm Order
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let allCoins = [];
+      let filteredCoins = [];
+      let currentPage = 1;
+      let coinsPerPage = 15;
+      let selectedCoin = "bitcoin";
+      let currentName = "Bitcoin";
+      let currentSymbol = "BTC";
+      let chart;
+      let currentTimeframe = "60"; // default timeframe in minutes
+      let searchTimeout;
+
+      // Fetch all cryptocurrencies
+      async function fetchAllCryptos() {
+        try {
+          const res = await fetch(
+            `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=false`
+          );
+          if (!res.ok) throw new Error("Failed to fetch data");
+
+          const data = await res.json();
+          allCoins = data;
+          filteredCoins = [...allCoins];
+          updatePagination();
+          displayMarket();
+        } catch (error) {
+          console.error("Error fetching cryptocurrencies:", error);
+          document.getElementById("marketList").innerHTML =
+            '<tr><td colspan="6" class="text-center text-danger">Error loading data. Please refresh the page.</td></tr>';
+        }
+      }
+
+      // Display market data with pagination
+      function displayMarket() {
+        const startIndex = (currentPage - 1) * coinsPerPage;
+        const endIndex = startIndex + coinsPerPage;
+        const pageCoins = filteredCoins.slice(startIndex, endIndex);
+
+        const tbody = document.getElementById("marketList");
+        tbody.innerHTML = "";
+
+        if (pageCoins.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="6" class="text-center">No cryptocurrencies found</td></tr>';
+          return;
+        }
+
+        pageCoins.forEach((c) => {
+          const row = document.createElement("tr");
+          row.classList.add("coin-row");
+          row.innerHTML = `
+      <td>${c.market_cap_rank || "N/A"}</td>
+      <td><img src="${c.image}" width="20" alt="${c.name}"> ${
+            c.name
+          } (${c.symbol.toUpperCase()})</td>
+      <td>$${c.current_price?.toLocaleString() || "N/A"}</td>
+      <td class="${
+        c.price_change_percentage_24h >= 0 ? "price-up" : "price-down"
+      }">
+        ${c.price_change_percentage_24h?.toFixed(2) || "0.00"}%
+      </td>
+      <td>$${c.total_volume?.toLocaleString() || "N/A"}</td>
+      <td>$${c.market_cap?.toLocaleString() || "N/A"}</td>
+    `;
+          row.onclick = () => {
+            loadChart(c.id, c.name, c.symbol.toUpperCase(), currentTimeframe);
+          };
+          tbody.appendChild(row);
+        });
+      }
+
+      // Search functionality
+      document
+        .getElementById("searchInput")
+        .addEventListener("input", function () {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(() => {
+            const searchTerm = this.value.toLowerCase();
+            filteredCoins = allCoins.filter(
+              (coin) =>
+                coin.name.toLowerCase().includes(searchTerm) ||
+                coin.symbol.toLowerCase().includes(searchTerm)
+            );
+            currentPage = 1;
+            updatePagination();
+            displayMarket();
+          }, 300);
+        });
+
+      // Pagination controls
+      function updatePagination() {
+        const totalPages = Math.ceil(filteredCoins.length / coinsPerPage);
+        document.getElementById(
+          "pageInfo"
+        ).textContent = `Page ${currentPage} of ${totalPages}`;
+
+        document.getElementById("prevPage").disabled = currentPage <= 1;
+        document.getElementById("nextPage").disabled =
+          currentPage >= totalPages;
+      }
+
+      document.getElementById("prevPage").addEventListener("click", () => {
+        if (currentPage > 1) {
+          currentPage--;
+          updatePagination();
+          displayMarket();
+        }
+      });
+
+      document.getElementById("nextPage").addEventListener("click", () => {
+        const totalPages = Math.ceil(filteredCoins.length / coinsPerPage);
+        if (currentPage < totalPages) {
+          currentPage++;
+          updatePagination();
+          displayMarket();
+        }
+      });
+
+      // Generate sample data for minute intervals (since CoinGecko free API doesn't provide minute data)
+      function generateMinuteData(basePrice, minutes) {
+        const data = [];
+        const now = new Date();
+        const interval = minutes;
+
+        for (let i = interval; i >= 0; i--) {
+          const timestamp = new Date(now.getTime() - i * 60000);
+          const volatility = 0.02; // 2% volatility
+          const change = (Math.random() - 0.5) * volatility;
+          const price = basePrice * (1 + change);
+
+          data.push({
+            x: timestamp.getTime(),
+            y: [
+              price * (1 + (Math.random() - 0.5) * 0.01), // open
+              price * (1 + Math.random() * 0.01), // high
+              price * (1 - Math.random() * 0.01), // low
+              price, // close
+            ],
+          });
+          basePrice = price;
+        }
+        return data;
+      }
+
+      // Load Chart with timeframe
+      async function loadChart(
+        coinId = "bitcoin",
+        coinName = "Bitcoin",
+        coinSymbol = "BTC",
+        timeframe = "60"
+      ) {
+        selectedCoin = coinId;
+        currentName = coinName;
+        currentSymbol = coinSymbol;
+        currentTimeframe = timeframe;
+
+        document.getElementById(
+          "chartTitle"
+        ).innerText = `${coinSymbol}/USDT Chart`;
+        document.getElementById(
+          "selectedCoin"
+        ).innerText = `Selected: ${coinName} (${coinSymbol})`;
+        document.getElementById("chartLoading").style.display = "block";
+
+        try {
+          // Get current price first
+          const priceRes = await fetch(
+            `https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`
+          );
+          const priceData = await priceRes.json();
+          const currentPrice = priceData[coinId]?.usd || 0;
+
+          document.getElementById(
+            "currentPrice"
+          ).innerText = `Current Price: $${currentPrice.toLocaleString()}`;
+
+          let data;
+
+          // For minute-based timeframes, use generated data (since free API doesn't provide minute intervals)
+          if (timeframe.endsWith && !timeframe.includes("D")) {
+            const minutes = parseInt(timeframe);
+            data = generateMinuteData(currentPrice, minutes);
+          } else {
+            // For day-based timeframes, use real API data
+            const days = timeframe.includes("D")
+              ? timeframe.replace("D", "")
+              : "1";
+            const res = await fetch(
+              `https://api.coingecko.com/api/v3/coins/${coinId}/ohlc?vs_currency=usd&days=${days}`
+            );
+            const apiData = await res.json();
+            data = apiData.map((d) => ({
+              x: new Date(d[0]),
+              y: [d[1], d[2], d[3], d[4]],
+            }));
+          }
+
+          if (chart) chart.destroy();
+
+          chart = new ApexCharts(document.querySelector("#chart"), {
+            chart: {
+              type: "candlestick",
+              height: 400,
+              animations: {
+                enabled: true,
+                easing: "easeinout",
+                speed: 800,
+              },
+            },
+            series: [{ name: "Price", data: data }],
+            xaxis: {
+              type: "datetime",
+              labels: {
+                datetimeUTC: false,
+              },
+            },
+            yaxis: {
+              tooltip: { enabled: true },
+              labels: {
+                formatter: function (val) {
+                  return "$" + val.toLocaleString();
+                },
+              },
+            },
+            tooltip: {
+              custom: function ({ seriesIndex, dataPointIndex, w }) {
+                const o = w.globals.seriesCandleO[seriesIndex][dataPointIndex];
+                const h = w.globals.seriesCandleH[seriesIndex][dataPointIndex];
+                const l = w.globals.seriesCandleL[seriesIndex][dataPointIndex];
+                const c = w.globals.seriesCandleC[seriesIndex][dataPointIndex];
+                return `
+            <div class="apexcharts-tooltip-candlestick">
+              <div>Open: <span>$${o.toFixed(2)}</span></div>
+              <div>High: <span>$${h.toFixed(2)}</span></div>
+              <div>Low: <span>$${l.toFixed(2)}</span></div>
+              <div>Close: <span>$${c.toFixed(2)}</span></div>
+            </div>
+          `;
+              },
+            },
+          });
+
+          await chart.render();
+
+          // Highlight active timeframe
+          document.querySelectorAll(".timeframe-btn").forEach((btn) => {
+            btn.classList.remove("btn-primary");
+            btn.classList.add("btn-outline-secondary");
+
+            const btnTimeframe =
+              btn.getAttribute("data-minutes") || btn.getAttribute("data-days");
+            if (btnTimeframe === timeframe) {
+              btn.classList.remove("btn-outline-secondary");
+              btn.classList.add("btn-primary");
+            }
+          });
+        } catch (error) {
+          console.error("Error loading chart:", error);
+          document.getElementById("chart").innerHTML =
+            '<div class="text-center text-danger">Error loading chart data</div>';
+        } finally {
+          document.getElementById("chartLoading").style.display = "none";
+        }
+      }
+
+      // Attach click listeners for timeframe buttons
+      document.querySelectorAll(".timeframe-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const timeframe =
+            btn.getAttribute("data-minutes") || btn.getAttribute("data-days");
+          loadChart(selectedCoin, currentName, currentSymbol, timeframe);
+        });
+      });
+
+      // Trade Action
+      async function trade(direction) {
+        const amount = parseFloat(document.getElementById("tradeAmount").value);
+        if (!amount || amount <= 0) {
+          document.getElementById(
+            "tradeResult"
+          ).innerHTML = `<span class="text-danger">Enter a valid amount!</span>`;
+          return;
+        }
+
+        try {
+          const res = await fetch(
+            `https://api.coingecko.com/api/v3/simple/price?ids=${selectedCoin}&vs_currencies=usd`
+          );
+          const priceData = await res.json();
+          const price = priceData[selectedCoin]?.usd;
+
+          if (!price) {
+            document.getElementById(
+              "tradeResult"
+            ).innerHTML = `<span class="text-danger">Unable to fetch current price</span>`;
+            return;
+          }
+
+          const coinsBought = (amount / price).toFixed(6);
+
+          document.getElementById(
+            "tradeResult"
+          ).innerHTML = `<span class="text-success">Trade placed successfully!<br>
+      <b>${direction.toUpperCase()}</b> position: ${coinsBought} ${currentSymbol}<br>
+      Entry Price: $${price.toLocaleString()}<br>
+      Amount: $${amount.toLocaleString()}</span>`;
+        } catch (error) {
+          document.getElementById(
+            "tradeResult"
+          ).innerHTML = `<span class="text-danger">Error placing trade. Please try again.</span>`;
+        }
+      }
+
+      // Initialize the application
+      async function init() {
+        await fetchAllCryptos();
+        await loadChart();
+
+        // Auto-refresh market data every 30 seconds
+        setInterval(fetchAllCryptos, 30000);
+      }
+
+      // Start the application
+      init();
+    </script>
+    <script>
+          let tradeDirection = "up";
+      let modalPrice = 0;
+      let selectedProfit = 40;
+      let userBalance = {{ user.wallet.amount|default:0 }};
+      let userLocked = {{ user.wallet.locked|default:0 }};
+      let countdownInterval;
+
+      // === Open modal with coin details ===
+      function openTradeModal(direction, coinName, coinSymbol, price) {
+        tradeDirection = direction;
+        modalPrice = parseFloat(price) || 0;
+        document.getElementById("modalCoin").innerText = `${coinSymbol}/USDT`;
+        document.getElementById("modalType").innerText = direction === "up" ? "Buy Up" : "Buy Down";
+        document.getElementById("modalType").className = direction === "up" ? "badge bg-success" : "badge bg-danger";
+        document.getElementById("modalPrice").innerText = `$${modalPrice.toLocaleString()}`;
+        document.getElementById("tradeError").classList.add("d-none");
+        document.getElementById("tradeSuccess").classList.add("d-none");
+        new bootstrap.Modal(document.getElementById("tradeModal")).show();
+      }
+
+      // === Duration buttons ===
+      document.querySelectorAll(".duration-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".duration-btn").forEach((b) => b.classList.remove("btn-primary"));
+          btn.classList.add("btn-primary");
+          selectedProfit = parseInt(btn.getAttribute("data-profit"));
+          updateProfit();
+        });
+      });
+
+      // === Quick amount buttons ===
+      document.querySelectorAll(".quick-amount").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.getElementById("modalAmount").value = btn.getAttribute("data-amount");
+          updateProfit();
+        });
+      });
+
+      // === Update profit when typing ===
+      document.getElementById("modalAmount").addEventListener("input", updateProfit);
+
+      function updateProfit() {
+        const amount = parseFloat(document.getElementById("modalAmount").value) || 0;
+        const profit = (amount * (selectedProfit / 100)).toFixed(2);
+        document.getElementById("expectedProfit").innerText = `$${profit}`;
+        document.getElementById("occupationDeposit").innerText = `$${amount.toFixed(2)}`;
+      }
+
+      // === Confirm trade ===
+      function confirmTrade() {
+        const errorBox = document.getElementById("tradeError");
+        const successBox = document.getElementById("tradeSuccess");
+        if (errorBox) {
+          errorBox.classList.add("d-none");
+          errorBox.innerText = "";
+        }
+        if (successBox) {
+          successBox.classList.add("d-none");
+          successBox.innerText = "";
+        }
+
+        const amount = parseFloat(document.getElementById("modalAmount").value) || 0;
+        if (amount < 10) {
+          errorBox.innerText = "⚠️ Minimum trade is $10.";
+          errorBox.classList.remove("d-none");
+          return;
+        }
+        if (amount > userBalance) {
+          errorBox.innerText = "❌ Insufficient balance. Please deposit to continue.";
+          errorBox.classList.remove("d-none");
+          return;
+        }
+
+        const selectedPlan = document.querySelector(".duration-btn.btn-primary");
+        const duration = selectedPlan ? parseInt(selectedPlan.getAttribute("data-duration")) : 30;
+        const profit = selectedPlan ? parseInt(selectedPlan.getAttribute("data-profit")) : 40;
+
+        console.log("Confirming trade:", { amount, duration, profit, tradeDirection });
+
+        userBalance -= amount;
+        document.getElementById("userBalanceDisplay").innerText = `$${userBalance.toFixed(2)}`;
+        updateBalanceSmall(userBalance, userLocked);
+
+        fetch("/chart/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}",
+          },
+          body: JSON.stringify({
+            amount: amount,
+            direction: tradeDirection,
+            coin: document.getElementById("modalCoin").innerText,
+            price: modalPrice,
+            profit: profit,
+            duration: duration,
+          }),
+        })
+          .then((res) => {
+            console.log("Chart endpoint response status:", res.status);
+            return res.json();
+          })
+          .then((data) => {
+            console.log("Chart endpoint response data:", data);
+            if (data.error) {
+              userBalance += amount;
+              document.getElementById("userBalanceDisplay").innerText = `$${userBalance.toFixed(2)}`;
+              updateBalanceSmall(userBalance, userLocked);
+              errorBox.innerText = data.error;
+              errorBox.classList.remove("d-none");
+              return;
+            }
+
+            successBox.innerText = `✅ Trade started — ${duration}s`;
+            successBox.classList.remove("d-none");
+            console.log("Calling showCountdownOnBalance with tradeId:", data.trade_id);
+
+            // Close the modal after showing success message
+            setTimeout(() => {
+              const modal = bootstrap.Modal.getInstance(document.getElementById("tradeModal"));
+              if (modal) {
+                modal.hide();
+              }
+              showCountdownOnBalance(duration, data.trade_id, amount, profit);
+            }, 1000);
+          })
+          .catch((err) => {
+            console.error("Network error in confirmTrade:", err);
+            userBalance += amount;
+            document.getElementById("userBalanceDisplay").innerText = `$${userBalance.toFixed(2)}`;
+            updateBalanceSmall(userBalance, userLocked);
+            errorBox.innerText = "⚠️ Network/server error. Please try again.";
+            errorBox.classList.remove("d-none");
+          });
+      }
+
+      // === Show countdown with progressive profit ===
+      function showCountdownOnBalance(duration, tradeId, amount, profitPct) {
+        console.log("Starting countdown:", { duration, tradeId, amount, profitPct });
+
+        const wallet = document.querySelector(".wallet-content");
+        if (!wallet) {
+          console.error("Wallet content element not found. Check if .wallet-content exists in the DOM.");
+          console.log("Current DOM:", document.body.innerHTML.substring(0, 500) + "...");
+          const errorBox = document.getElementById("tradeError");
+          if (errorBox) {
+            errorBox.innerText = "⚠️ Unable to display countdown. Please refresh the page.";
+            errorBox.classList.remove("d-none");
+          }
+          return;
+        }
+
+        let countdownEl = document.getElementById("tradeCountdown");
+        if (!countdownEl) {
+          countdownEl = document.createElement("div");
+          countdownEl.id = "tradeCountdown";
+          countdownEl.style.marginTop = "8px";
+          countdownEl.style.fontWeight = "600";
+          countdownEl.style.color = "#ffc107";
+          wallet.appendChild(countdownEl);
+        }
+
+        let remaining = parseInt(duration);
+        if (isNaN(remaining) || remaining <= 0) {
+          console.error("Invalid duration:", duration);
+          return;
+        }
+
+        // Calculate total expected profit and locked amount
+        const profit = amount * (profitPct / 100);
+        const totalLocked = amount + profit;
+
+        clearInterval(window.countdownInterval);
+        countdownEl.innerText = `Trade ends in ${remaining}s`;
+        updateBalanceSmall(userBalance, userLocked, false); // Use actual locked amount initially
+
+        window.countdownInterval = setInterval(() => {
+          remaining--;
+          countdownEl.innerText = `Trade ends in ${remaining}s`;
+          console.log("Countdown:", remaining);
+
+          // Update estimated locked amount (linear progression)
+          const progress = (duration - remaining) / duration;
+          const estimatedLocked = (totalLocked * progress).toFixed(2);
+          updateBalanceSmall(userBalance, estimatedLocked, true);
+
+          if (remaining < 0) {
+            clearInterval(window.countdownInterval);
+            countdownEl.innerText = `Finalizing trade...`;
+            console.log("Calling finalizeTrade with tradeId:", tradeId);
+            finalizeTrade(tradeId, countdownEl, amount, profitPct);
+          }
+        }, 1000);
+      }
+
+      // === Finalize trade ===
+      function finalizeTrade(tradeId, countdownEl, amount, profitPct) {
+        console.log("Finalizing trade with ID:", tradeId);
+
+        const successBox = document.getElementById("tradeSuccess");
+        const errorBox = document.getElementById("tradeError");
+
+        fetch("/finalize_trade/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}",
+          },
+          body: JSON.stringify({ trade_id: tradeId }),
+        })
+          .then((res) => {
+            console.log("Finalize trade response status:", res.status);
+            return res.json();
+          })
+          .then((data) => {
+            console.log("Finalize trade response data:", data);
+            if (data.error) {
+              console.error("Finalize trade error:", data.error);
+              if (errorBox) {
+                errorBox.innerText = data.error;
+                errorBox.classList.remove("d-none");
+              }
+              if (countdownEl) countdownEl.innerText = "Finalization failed";
+              return;
+            }
+
+            userBalance = parseFloat(data.available) || 0;
+            userLocked = parseFloat(data.locked) || 0;
+            document.getElementById("userBalanceDisplay").innerText = `$${userBalance.toFixed(2)}`;
+            updateBalanceSmall(userBalance, userLocked);
+
+            if (countdownEl) countdownEl.innerText = "🎉 Trade completed!";
+            if (successBox) {
+              successBox.innerText = "🎉 Trade completed! Profit credited to locked balance.";
+              successBox.classList.remove("d-none");
+            }
+
+            setTimeout(() => {
+              if (countdownEl && countdownEl.parentNode) countdownEl.parentNode.removeChild(countdownEl);
+            }, 2000);
+          })
+          .catch((err) => {
+            console.error("Network error in finalizeTrade:", err);
+            if (errorBox) {
+              errorBox.innerText = "Network error while finalizing.";
+              errorBox.classList.remove("d-none");
+            }
+            if (countdownEl) countdownEl.innerText = "Finalization error";
+          });
+      }
+
+      // === Update balance display ===
+      function updateBalanceSmall(available, locking, isEstimate = false) {
+        const smallEl = document.querySelector(".wallet-content small");
+        if (!smallEl) {
+          console.error("Small element not found in wallet-content");
+          return;
+        }
+
+        const availableText = typeof available === "number" ? `$${available.toFixed(2)}` : `$${parseFloat(available).toFixed(2)}`;
+        const lockText = isEstimate ? `~$${parseFloat(locking).toFixed(2)}` : `$${parseFloat(locking).toFixed(2)}`;
+        smallEl.innerText = `Available: ${availableText} | Locking: ${lockText}`;
+      }
+
+      // === Initialize ===
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("DOM fully loaded, checking for wallet-content");
+        const wallet = document.querySelector(".wallet-content");
+        if (wallet) {
+          console.log("Wallet-content found in DOM");
+          // Initialize balance display with actual values
+          updateBalanceSmall(userBalance, userLocked, false);
+        } else {
+          console.error("Wallet-content not found on page load");
+        }
+        async function init() {
+          await fetchAllCryptos();
+          await loadChart();
+          setInterval(fetchAllCryptos, 30000);
+        }
+        init();
+      });
+    </script>
+  </body>
+</html>
+
+{% endblock content %}

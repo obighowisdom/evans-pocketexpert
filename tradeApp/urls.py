@@ -18,13 +18,23 @@ urlpatterns = [
     path('policy/', views.policy, name = 'policy'),
 
     path('dashboard/', views.dashboard, name = 'dashboard'),
-    path('deposit/', views.deposit, name = 'deposit'),
-    path('withdraw/', views.withdraw, name = 'withdraw'),
+    
     # path('profile/', views.profile, name = 'profile'),
     path('contact/', views.contact, name = 'contact'),
 
     path('login/', CustomLoginView.as_view(), name='login'),
     path('register/', SignUpView.as_view(), name='register'),
+    path('balance/', views.balance, name = 'balance'),
+    path('chart/', views.chart, name = 'chart'),
+    path("markets/", views.market_table, name="market_table"),
+    path('finalize_trade/', views.finalize_trade, name='finalize_trade'),
+    path('get_trades/', views.get_trades, name='get_trades'),  # API JSON
+    path('orders/', views.trades_page, name='trades_page'),    # HTML page
+    path('deposit/', views.deposit_view, name='deposit'),
+    path('withdraw/', views.withdrawal_view, name='withdraw'),
+    
+
+
 
     
 ]

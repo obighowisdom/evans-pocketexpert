@@ -1,0 +1,152 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block content %}
+
+
+<style>
+  /* ✅ Desktop spacing for sidebar */
+  @media (min-width: 992px) {
+    .content-wrapper {
+      margin-left: 250px; /* space for sidebar */
+    }
+  }
+
+  /* ✅ Responsive font sizes for table */
+  @media (max-width: 767px) {
+    #tradesTable th, 
+    #tradesTable td {
+      font-size: 0.75rem; /* smaller text on mobile */
+      white-space: nowrap; /* avoid wrapping headers */
+    }
+
+    #tradesTable th {
+      font-weight: 500;
+    }
+  }
+
+  @media (max-width: 575px) {
+    #tradesTable th, 
+    #tradesTable td {
+      font-size: 0.7rem;
+      padding: 0.35rem;
+    }
+  }
+
+  /* ✅ Make search box smaller on mobile */
+  @media (max-width: 575px) {
+    #searchInput {
+      font-size: 0.8rem;
+      padding: 0.3rem;
+    }
+  }
+</style>
+
+<div class="container-fluid content-wrapper py-4">
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+      <h4 class="mb-3">📊 Trade History</h4>
+
+      <!-- Search Bar -->
+      <div class="input-group mb-3">
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="form-control" 
+          placeholder="Search by coin, direction or status..."
+        >
+        <button class="btn btn-outline-primary" type="button" onclick="filterTrades()">Search</button>
+      </div>
+
+      <!-- Table -->
+      <div class="table-responsive">
+        <table class="table table-hover table-sm align-middle" id="tradesTable">
+          <thead class="table-light">
+            <tr>
+              <th>Trade ID</th>
+              <th>Coin</th>
+              <th>Direction</th>
+              <th>Amount ($)</th>
+              <th>Price</th>
+              <th>Profit %</th>
+              <th>Duration (s)</th>
+              <th>Status</th>
+              <th>Created</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rows injected here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- No Trades Message -->
+      <p id="noTrades" class="text-muted d-none text-center mt-3">No trades found.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  let tradesData = [];
+
+  // Fetch trades from API
+  function loadTrades() {
+    fetch('/get_trades/')
+      .then(res => res.json())
+      .then(data => {
+        tradesData = data.trades || [];
+        renderTrades(tradesData);
+      })
+      .catch(() => {
+        document.getElementById('noTrades').classList.remove('d-none');
+      });
+  }
+
+  // Render trades to table
+  function renderTrades(trades) {
+    const tbody = document.querySelector('#tradesTable tbody');
+    tbody.innerHTML = ''; // Clear old rows
+
+    if (trades.length === 0) {
+      document.getElementById('noTrades').classList.remove('d-none');
+      return;
+    } else {
+      document.getElementById('noTrades').classList.add('d-none');
+    }
+
+    trades.forEach(trade => {
+      const row = `
+        <tr>
+          <td>${trade.trade_id}</td>
+          <td>${trade.coin}</td>
+          <td><span class="badge bg-${trade.direction === 'up' ? 'success' : 'danger'}">${trade.direction.toUpperCase()}</span></td>
+          <td>$${trade.amount.toFixed(2)}</td>
+          <td>$${trade.price.toFixed(2)}</td>
+          <td>${trade.profit}%</td>
+          <td>${trade.duration}</td>
+          <td><span class="badge bg-${trade.status === 'completed' ? 'primary' : trade.status === 'pending' ? 'warning' : 'secondary'}">${trade.status}</span></td>
+          <td>${trade.created_at}</td>
+        </tr>
+      `;
+      tbody.insertAdjacentHTML('beforeend', row);
+    });
+  }
+
+  // Filter trades based on search input
+  function filterTrades() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = tradesData.filter(trade =>
+      trade.coin.toLowerCase().includes(query) ||
+      trade.direction.toLowerCase().includes(query) ||
+      trade.status.toLowerCase().includes(query)
+    );
+    renderTrades(filtered);
+  }
+
+  // Live filtering on typing
+  document.getElementById('searchInput').addEventListener('input', filterTrades);
+
+  // Load trades on page load
+  document.addEventListener('DOMContentLoaded', loadTrades);
+</script>
+
+{% endblock %}

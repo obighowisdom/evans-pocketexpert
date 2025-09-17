@@ -3,6 +3,9 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.utils import timezone
+import uuid
+
 
 
 
@@ -36,10 +39,13 @@ class contact_request(models.Model):
 
 class wallet(models.Model):
     user = models.OneToOneField('tradeApp.CustomUser', null=True, on_delete=models.CASCADE)
-    amount = models.CharField(max_length=200, default='0.00')
-       
+    amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)   # <— changed
+    locked = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    available = models.DecimalField(max_digits=12, decimal_places=2, default=0) # <— changed
+
     def __str__(self):
         return str(self.user)
+
 
 # accounts/models.py
 
@@ -73,22 +79,55 @@ class CustomUser(AbstractUser):
 
 
 
-# class Profile(models.Model):
-#     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-#     profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
-#     # Add other personal data fields
-#     bio = models.TextField(max_length=500, blank=True)
-#     birth_date = models.DateField(null=True, blank=True)
-#     phone_number = models.CharField(max_length=15, blank=True)
-#     address = models.CharField(max_length=255, blank=True)
-    
-#     def __str__(self):
-#         return f"{self.user.email}'s profile"
 
-# # Automatically create/update Profile when User is created/updated
-# @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-# def create_or_update_user_profile(sender, instance, created, **kwargs):
-#     if created:
-#         Profile.objects.create(user=instance)
-#     else:
-#         instance.profile.save()
+
+class Trade(models.Model):
+    DIRECTION_CHOICES = (
+        ('up', 'Buy Up'),
+        ('down', 'Buy Down'),
+    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    trade_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    coin = models.CharField(max_length=50)
+    direction = models.CharField(max_length=10, choices=DIRECTION_CHOICES)
+    amount = models.FloatField()
+    profit_percentage = models.FloatField()
+    duration = models.IntegerField()  # seconds
+    price = models.FloatField(default=0)
+    status = models.CharField(max_length=20, default='running')  # running/completed
+    created_at = models.DateTimeField(auto_now_add=True)
+    end_time = models.DateTimeField(blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.end_time and self.duration:
+            self.end_time = timezone.now() + timezone.timedelta(seconds=self.duration)
+        super().save(*args, **kwargs)
+
+
+
+class Deposit(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    coin = models.CharField(max_length=50, choices=[('bitcoin', 'Bitcoin'), ('ethereum', 'Ethereum')])
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    wallet_address = models.CharField(max_length=100, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.coin} - ${self.amount}"
+
+
+
+class Withdrawal(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    coin = models.CharField(max_length=50, choices=[('bitcoin', 'Bitcoin'), ('ethereum', 'Ethereum')])
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    wallet_address = models.CharField(max_length=100)
+    status = models.CharField(max_length=20, default='pending', choices=[('pending', 'Pending'), ('completed', 'Completed'), ('failed', 'Failed')])
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.coin} - ${self.amount} - {self.status}"
+
+    class Meta:
+        verbose_name = "Withdrawal"
+        verbose_name_plural = "Withdrawals"

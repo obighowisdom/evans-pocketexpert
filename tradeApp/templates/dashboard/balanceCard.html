@@ -1,0 +1,24 @@
+<section class="hero-section">
+  <div class="hero-content">
+    <h1>Balance</h1>
+    <div class="wallet-content">
+      <!-- Total balance = available + locked -->
+      <h2 id="userBalanceDisplay">
+        ${{ user.wallet.amount|default_if_none:"0"|add:user.wallet.locked|default_if_none:"0"|floatformat:2 }}
+      </h2>
+      <small>
+        Available: ${{ user.wallet.amount|default_if_none:"0"|floatformat:2 }} | 
+        Locking: ${{ user.wallet.locked|default_if_none:"0"|floatformat:2 }}
+      </small>
+      <div class="btn-section d-flex justify-content-center gap-2 mt-3">
+        <a href="/deposit"><button class="btn btn-light btn-sm px-3">Deposit</button></a>
+        <a href="/withdraw"><button class="btn btn-light btn-sm px-3">Withdraw</button></a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-graphic">
+    <i class="fas fa-coins"></i>
+  </div>
+</section>
+
+

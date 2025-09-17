@@ -1,0 +1,92 @@
+{% extends 'dashboard/base.html' %} {% load static %} {% block content %}
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          {% if messages %} {% for message in messages %}
+          <div
+            class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}"
+            role="alert"
+          >
+            {{ message }}
+          </div>
+          {% endfor %} {% endif %}
+          <h4 class="mb-3 text-center">💸 Withdraw Funds</h4>
+
+          <div class="alert alert-warning text-center">
+            ⚠️ Please ensure you enter the correct wallet address for the
+            selected coin. Withdrawals are irreversible.
+          </div>
+
+          <form method="post" action="/withdraw/">
+            {% csrf_token %}
+            <!-- Coin Select -->
+            <div class="mb-3">
+              <label for="coin" class="form-label">Select Coin</label>
+              <select id="coin" name="coin" class="form-select" required>
+                <option value="">-- Choose --</option>
+                <option value="bitcoin">Bitcoin</option>
+                <option value="ethereum">Ethereum</option>
+              </select>
+            </div>
+
+            <!-- Wallet Address -->
+            <div class="mb-3">
+              <label for="wallet_address" class="form-label"
+                >Wallet Address</label
+              >
+              <div class="input-group">
+                <input
+                  type="text"
+                  id="wallet_address"
+                  name="wallet_address"
+                  class="form-control"
+                  placeholder="Enter your wallet address"
+                  required
+                />
+                <!-- <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  onclick="copyAddress()"
+                >
+                  Copy
+                </button> -->
+              </div>
+            </div>
+
+            <!-- Amount -->
+            <div class="mb-3">
+              <label for="amount" class="form-label">Amount (USD)</label>
+              <input
+                type="number"
+                step="0.01"
+                min="10"
+                name="amount"
+                id="amount"
+                class="form-control"
+                required
+              />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+              Submit Withdrawal
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function copyAddress() {
+    const addressInput = document.getElementById("wallet_address");
+    addressInput.select();
+    addressInput.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+    alert("Address copied to clipboard!");
+  }
+</script>
+{% endblock %}
