@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_view
+
 # from tradeApp.forms import UserLoginForm
 from .views import CustomLoginView, SignUpView
 
@@ -11,7 +12,7 @@ urlpatterns = [
     path('', views.index, name = 'index'),
     # path('register/', views.register, name = 'register'),
     # path('login/', auth_view.LoginView.as_view(template_name='home/login.html', authentication_form=UserLoginForm), name = 'login'),
-    path('logout/', auth_view.LogoutView.as_view(template_name='logout.html'), name = 'logout'),
+    path('logout/', auth_view.LogoutView.as_view(next_page='/login/'), name='logout'),
     path('about/', views.about, name = 'about'),
     path('demo/', views.demo, name = 'demo'),
     path('quick/', views.quick, name = 'quick'),

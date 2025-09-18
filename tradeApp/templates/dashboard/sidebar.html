@@ -1,27 +1,45 @@
- <nav class="sidebar">
-        <div class="sidebar-brand">
-            <h2><i class="fas fa-mountain me-2"></i>Fabex</h2>
-        </div>
-        <div class="sidebar-nav">
-            <a href="/dashboard" class="nav-item">
-                <i class="fas fa-home nav-icon"></i>
-                Home
-            </a>
-            <!-- <a href="#" class="nav-item">
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h2><i class="fas fa-mountain me-2"></i>Fabex</h2>
+  </div>
+  <div class="sidebar-nav">
+    <a href="/dashboard" class="nav-item">
+      <i class="fas fa-home nav-icon"></i>
+      Home
+    </a>
+    <!-- <a href="#" class="nav-item">
                 <i class="fas fa-chart-line nav-icon"></i>
                 Market
             </a> -->
-            <a href="/chart" class="nav-item">
-                <i class="fas fa-exchange-alt nav-icon"></i>
-                Market & Trade
-            </a>
-            <a href="/orders" class="nav-item">
-                <i class="fas fa-list nav-icon"></i>
-                Order
-            </a>
-            <a href="/balance" class="nav-item">
-                <i class="fas fa-wallet nav-icon"></i>
-                Balances
-            </a>
-        </div>
-    </nav>
+    <a href="/chart" class="nav-item">
+      <i class="fas fa-exchange-alt nav-icon"></i>
+      Market & Trade
+    </a>
+    <a href="/orders" class="nav-item">
+      <i class="fas fa-list nav-icon"></i>
+      Order
+    </a>
+    <a href="/withdraw" class="nav-item">
+      <i class="fas fa-wallet nav-icon"></i>
+      Withdraw
+    </a>
+    <a href="/deposit" class="nav-item">
+      <i class="fas fa-exchange-alt nav-icon"></i>
+      Deposit
+    </a>
+
+    <a href="/balance" class="nav-item">
+      <i class="fas fa-wallet nav-icon"></i>
+      Balances
+    </a>
+    <div>
+      <form method="post" action="/logout/">
+        {% csrf_token %}
+        <button type="submit" class="btn nav-item" style="color: brown; display: flex; align-items: center; gap: 15px;">
+          <i class="fas fa-sign-out-alt" style="color: brown"></i> 
+          <b>Logout</b>
+        </button>
+      </form>
+    </div>
+  </div>
+</nav>

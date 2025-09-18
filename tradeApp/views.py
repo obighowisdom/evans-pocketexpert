@@ -89,7 +89,7 @@ def policy(request):
     
     return render(request, 'home/policy.html')
 
-
+@login_required()
 def dashboard(request):
     
     return render(request, 'dashboard/home.html')

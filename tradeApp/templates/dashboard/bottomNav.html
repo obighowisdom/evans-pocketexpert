@@ -1,46 +1,57 @@
-  <nav class="bottom-nav">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col">
-                    <a href="/dashboard" class="nav-item active d-block">
-                        <div class="nav-icon">
-                            <i class="fas fa-home"></i>
-                        </div>
-                        Home
-                    </a>
-                </div>
-                <div class="col">
-                    <a href="/charts" class="nav-item d-block">
-                        <div class="nav-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        Market
-                    </a>
-                </div>
-                <div class="col">
-                    <a href="/chart" class="nav-item d-block">
-                        <div class="nav-icon">
-                            <i class="fas fa-exchange-alt"></i>
-                        </div>
-                        Trade
-                    </a>
-                </div>
-                <div class="col">
-                    <a href="/order" class="nav-item d-block">
-                        <div class="nav-icon">
-                            <i class="fas fa-list"></i>
-                        </div>
-                        Order
-                    </a>
-                </div>
-                <div class="col">
-                    <a href="/balance" class="nav-item d-block">
-                        <div class="nav-icon">
-                            <i class="fas fa-wallet"></i>
-                        </div>
-                        Balances
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
+<nav class="bottom-nav">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col">
+        <a href="/dashboard" class="nav-item active d-block">
+          <div class="nav-icon">
+            <i class="fas fa-home"></i>
+          </div>
+          Home
+        </a>
+      </div>
+      <div class="col">
+        <a href="/chart" class="nav-item d-block">
+          <div class="nav-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          Trade
+        </a>
+      </div>
+
+      <div class="col">
+        <a href="/deposit" class="nav-item d-block">
+          <div class="nav-icon">
+            <i class="fas fa-exchange-alt"></i>
+          </div>
+          Deposit
+        </a>
+      </div>
+      <div class="col">
+        <a href="/order" class="nav-item d-block">
+          <div class="nav-icon">
+            <i class="fas fa-list"></i>
+          </div>
+          Order
+        </a>
+      </div>
+      <div class="col">
+        <a href="/balance" class="nav-item d-block">
+          <div class="nav-icon">
+            <i class="fas fa-wallet"></i>
+          </div>
+          Balances
+        </a>
+      </div>
+      <div class="col">
+        <form method="post" action="/logout/">
+          {% csrf_token %}
+          <button type="submit" class="btn nav-item" style="color: brown;">
+            <i class="fas fa-sign-out-alt" style="color: brown;"></i> Logout
+          </button>
+        </form>
+
+        
+      </div>
+    </div>
+  </div>
+</nav>
